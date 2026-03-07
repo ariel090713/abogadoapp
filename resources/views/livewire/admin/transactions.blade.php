@@ -12,7 +12,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
         <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="text-sm text-gray-600 mb-1">Total Transactions</div>
             <div class="text-2xl font-bold text-gray-900">{{ number_format($stats['total']) }}</div>
@@ -28,6 +28,14 @@
         <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="text-sm text-gray-600 mb-1">Refunded</div>
             <div class="text-2xl font-bold text-red-600">{{ number_format($stats['refunded']) }}</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="text-sm text-gray-600 mb-1">In Hold (7d)</div>
+            <div class="text-2xl font-bold text-orange-600">{{ number_format($stats['in_hold']) }}</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="text-sm text-gray-600 mb-1">Ready for Payout</div>
+            <div class="text-2xl font-bold text-blue-600">{{ number_format($stats['eligible_for_payout']) }}</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="text-sm text-gray-600 mb-1">Total Revenue</div>

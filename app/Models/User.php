@@ -157,6 +157,22 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get all transactions where this user is the lawyer
+     */
+    public function lawyerTransactions()
+    {
+        return $this->hasMany(Transaction::class, 'lawyer_id');
+    }
+
+    /**
+     * Get all payouts for this lawyer
+     */
+    public function payouts()
+    {
+        return $this->hasMany(Payout::class, 'lawyer_id');
+    }
+
+    /**
      * Get notification preference for a specific type and channel
      */
     public function getNotificationPreference(string $type, string $channel = 'mail'): bool
@@ -189,14 +205,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function wantsPushNotification(string $type): bool
     {
         return $this->getNotificationPreference($type, 'broadcast');
-    }
-
-    /**
-     * Get payouts for this lawyer
-     */
-    public function payouts()
-    {
-        return $this->hasMany(Payout::class, 'lawyer_id');
     }
 
     /**

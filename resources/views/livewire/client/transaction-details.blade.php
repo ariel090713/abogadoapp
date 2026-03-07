@@ -305,6 +305,25 @@
             </button>
         </div>
     </div>
+    @elseif($this->refundIneligibilityReason)
+    <!-- Refund Not Available Notice -->
+    <div class="bg-gray-50 rounded-xl border border-gray-200 p-6">
+        <div class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-900">Refund Not Available</h3>
+                <p class="text-sm text-gray-600 mt-1">{{ $this->refundIneligibilityReason }}</p>
+                @if($transaction->payout_id)
+                    <p class="text-sm text-gray-600 mt-2">
+                        For assistance with this transaction, please 
+                        <a href="{{ route('contact-us') }}" class="text-primary-600 hover:text-primary-700 font-medium">contact our support team</a>.
+                    </p>
+                @endif
+            </div>
+        </div>
+    </div>
     @endif
 
     <!-- Refund Request Modal -->

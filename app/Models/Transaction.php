@@ -22,6 +22,7 @@ class Transaction extends Model
         'paymongo_payment_intent_id',
         'paymongo_payment_method_id',
         'refund_id',
+        'payout_id',
         'payment_details',
         'failure_reason',
         'processed_at',
@@ -58,6 +59,11 @@ class Transaction extends Model
     public function refund(): BelongsTo
     {
         return $this->belongsTo(Refund::class);
+    }
+
+    public function payout(): BelongsTo
+    {
+        return $this->belongsTo(Payout::class);
     }
 
     public function scopeSuccessful($query)

@@ -38,7 +38,7 @@ class Transactions extends Component
 
     public function render()
     {
-        $query = Transaction::with(['user', 'lawyer', 'consultation', 'documentRequest', 'refund'])
+        $query = Transaction::with(['user', 'lawyer', 'consultation', 'documentRequest', 'refund', 'payout'])
             ->orderBy('created_at', 'desc');
 
         // Search
@@ -76,6 +76,16 @@ class Transactions extends Component
             'pending' => Transaction::where('status', 'pending')->count(),
             'refunded' => Transaction::where('status', 'refunded')->count(),
             'total_amount' => Transaction::where('status', 'completed')->sum('amount'),
+            'in_hold' => Transaction::where('status', 'completed')
+                ->whereNull('payout_id')
+                ->whereNull('refund_id')
+                ->where('created_at', '>', now()->subDays(7))
+                ->count(),
+            'eligible_for_payout' => Transaction::where('status', 'completed')
+                ->whereNull('payout_id')
+                ->whereNull('refund_id')
+                ->where('created_at', '<=', now()->subDays(7))
+                ->count(),
         ];
 
         return view('livewire.admin.transactions', [

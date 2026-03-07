@@ -133,8 +133,8 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureOnboardingComp
         Route::get('/consultation/{id}', \App\Livewire\Admin\ConsultationDetails::class)->name('consultation.details');
         Route::get('/transactions', \App\Livewire\Admin\Transactions::class)->name('transactions');
         Route::get('/refunds', \App\Livewire\Admin\RefundManagement::class)->name('refunds');
-        Route::get('/payouts', function () { return 'Admin Payouts'; })->name('payouts');
-        Route::get('/reports', function () { return 'Admin Reports'; })->name('reports');
+        Route::get('/payouts', \App\Livewire\Admin\Payouts::class)->name('payouts');
+        Route::get('/reports', \App\Livewire\Admin\Reports::class)->name('reports');
         Route::get('/settings', function () { return 'Admin Settings'; })->name('settings');
     });
 

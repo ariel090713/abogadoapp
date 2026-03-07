@@ -36,6 +36,27 @@ class TransactionDetails extends Component
         return $refundService->isEligibleForRefund($this->transaction);
     }
 
+    public function getRefundIneligibilityReasonProperty()
+    {
+        if ($this->transaction->refund_id) {
+            return 'A refund has already been requested for this transaction.';
+        }
+
+        if (!in_array($this->transaction->status, ['completed', 'captured'])) {
+            return 'Only completed transactions can be refunded.';
+        }
+
+        if ($this->transaction->payout_id) {
+            return 'This transaction has already been paid out to the lawyer and cannot be refunded automatically. Please contact support for assistance.';
+        }
+
+        if ($this->transaction->created_at->diffInDays(now()) > 30) {
+            return 'Refund window has expired. Refunds must be requested within 30 days of payment.';
+        }
+
+        return null;
+    }
+
     public function submitRefundRequest()
     {
         $this->validate([

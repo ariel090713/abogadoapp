@@ -300,6 +300,15 @@ class RefundService
             return false;
         }
 
+        // CRITICAL: Cannot refund if already paid out to lawyer
+        if ($transaction->payout_id) {
+            Log::warning('Refund blocked: Transaction already paid out to lawyer', [
+                'transaction_id' => $transaction->id,
+                'payout_id' => $transaction->payout_id,
+            ]);
+            return false;
+        }
+
         // Check if within refund window (30 days)
         if ($transaction->created_at->diffInDays(now()) > 30) {
             return false;
