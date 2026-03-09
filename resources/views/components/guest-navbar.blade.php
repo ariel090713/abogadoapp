@@ -130,12 +130,58 @@
                     </div>
                 </div>
                 
-                <a href="{{ route('about') }}" class="text-gray-700 hover:text-primary-700 font-medium transition">
-                    About Us
+                <!-- Company Dropdown -->
+                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                    <button 
+                        @click="open = !open"
+                        class="flex items-center gap-1 text-gray-700 hover:text-primary-700 font-medium transition"
+                    >
+                        <span>Company</span>
+                        <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div 
+                        x-show="open"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
+                        style="display: none;"
+                    >
+                        <a href="{{ route('about') }}" class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <div>
+                                <div class="text-sm font-medium">About Us</div>
+                                <div class="text-xs text-gray-500">Our story & mission</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('contact') }}" class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <div>
+                                <div class="text-sm font-medium">Contact Us</div>
+                                <div class="text-xs text-gray-500">Get in touch</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <a href="{{ route('webinars') }}" class="text-gray-700 hover:text-primary-700 font-medium transition">
+                    Webinars
                 </a>
-                <a href="{{ route('contact') }}" class="text-gray-700 hover:text-primary-700 font-medium transition">
-                    Contact Us
+                <a href="{{ route('community') }}" class="text-gray-700 hover:text-primary-700 font-medium transition">
+                    Community
                 </a>
+                
                 @auth
                     <a href="{{ route('dashboard') }}" class="px-6 py-2.5 bg-primary-700 text-white rounded-lg hover:bg-primary-800 font-medium transition shadow-sm">
                         Dashboard
@@ -317,20 +363,68 @@
                 </div>
             </div>
             
+            <!-- Company Dropdown Mobile -->
+            <div x-data="{ open: false }">
+                <button 
+                    @click="open = !open"
+                    class="w-full flex items-center justify-between px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition"
+                >
+                    <span>Company</span>
+                    <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <div 
+                    x-show="open"
+                    x-transition
+                    class="mt-2 ml-4 space-y-2"
+                    style="display: none;"
+                >
+                    <a 
+                        href="{{ route('about') }}" 
+                        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 transition"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <div class="text-sm font-medium">About Us</div>
+                            <div class="text-xs text-gray-500">Our story & mission</div>
+                        </div>
+                    </a>
+                    <a 
+                        href="{{ route('contact') }}" 
+                        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 transition"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <div>
+                            <div class="text-sm font-medium">Contact Us</div>
+                            <div class="text-xs text-gray-500">Get in touch</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
             <a 
-                href="{{ route('about') }}" 
+                href="{{ route('webinars') }}" 
                 class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition"
                 @click="mobileMenuOpen = false"
             >
-                About Us
+                Webinars
             </a>
             <a 
-                href="{{ route('contact') }}" 
+                href="{{ route('community') }}" 
                 class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition"
                 @click="mobileMenuOpen = false"
             >
-                Contact Us
+                Community
             </a>
+            
             @auth
                 <a 
                     href="{{ route('dashboard') }}" 
