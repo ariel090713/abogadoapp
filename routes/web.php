@@ -28,6 +28,7 @@ Route::get('/events/{slug}', \App\Livewire\Resources\EventView::class)->name('re
 Route::get('/galleries', \App\Livewire\Resources\GalleriesIndex::class)->name('resources.galleries');
 Route::get('/galleries/{slug}', \App\Livewire\Resources\GalleryView::class)->name('resources.galleries.view');
 Route::get('/downloadables', \App\Livewire\Resources\DownloadablesIndex::class)->name('resources.downloadables');
+Route::get('/faqs', \App\Livewire\Resources\FaqsIndex::class)->name('resources.faqs');
 Route::get('/about', \App\Livewire\AboutUs::class)->name('about');
 Route::get('/contact', \App\Livewire\ContactUs::class)->name('contact');
 
@@ -162,6 +163,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureOnboardingComp
         Route::get('/reports', \App\Livewire\Admin\Reports::class)->name('reports');
         Route::get('/content', \App\Livewire\Admin\ContentManagement::class)->name('content');
         Route::get('/specializations', \App\Livewire\Admin\SpecializationManagement::class)->name('specializations');
+        Route::get('/faqs', \App\Livewire\Admin\FaqManagement::class)->name('faqs');
         Route::get('/settings', \App\Livewire\Admin\AISettings::class)->name('settings');
     });
 

@@ -1,35 +1,35 @@
 <div class="min-h-screen bg-gradient-to-b from-gray-50 to-white">
     <!-- AI Assistant Modal -->
     @if($showAIModal)
-        <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" wire:click.self="closeModal">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden" @click.stop>
+        <div class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center" wire:click.self="closeModal">
+            <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden" @click.stop>
                 @if(!$aiMode)
                     <!-- Initial Choice -->
-                    <div class="p-8 md:p-12">
-                        <div class="text-center mb-8">
-                            <div class="bg-gradient-to-br from-primary-700 to-accent-700 rounded-full p-4 w-20 h-20 mx-auto mb-6 flex items-center justify-center">
-                                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-6 md:p-8 lg:p-12 max-h-[95vh] overflow-y-auto">
+                        <div class="text-center mb-6 md:mb-8">
+                            <div class="bg-gradient-to-br from-primary-700 to-accent-700 rounded-full p-3 md:p-4 w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 flex items-center justify-center">
+                                <svg class="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                                 </svg>
                             </div>
-                            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How would you like to find a lawyer?</h2>
-                            <p class="text-lg text-gray-600">Choose the option that works best for you</p>
+                            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">How would you like to find a lawyer?</h2>
+                            <p class="text-base md:text-lg text-gray-600">Choose the option that works best for you</p>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                             <!-- AI Assistant Option -->
                             <button 
                                 wire:click="startAIChat"
-                                class="group p-8 border-2 border-gray-200 rounded-2xl hover:border-primary-500 hover:shadow-xl transition-all duration-300 text-left"
+                                class="group p-6 md:p-8 border-2 border-gray-200 rounded-2xl hover:border-primary-500 hover:shadow-xl transition-all duration-300 text-left"
                             >
-                                <div class="bg-gradient-to-br from-primary-100 to-accent-100 rounded-xl p-4 w-16 h-16 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <svg class="w-8 h-8 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="bg-gradient-to-br from-primary-100 to-accent-100 rounded-xl p-3 md:p-4 w-14 h-14 md:w-16 md:h-16 mb-4 md:mb-6 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <svg class="w-7 h-7 md:w-8 md:h-8 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Ask AI to Help Me</h3>
-                                <p class="text-gray-600 mb-4">Describe your legal concern and let our AI assistant recommend the best lawyers for your needs.</p>
-                                <div class="flex items-center text-primary-700 font-medium group-hover:translate-x-2 transition-transform">
+                                <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">Ask AI to Help Me</h3>
+                                <p class="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Describe your legal concern and let our AI assistant recommend the best lawyers for your needs.</p>
+                                <div class="flex items-center text-primary-700 font-medium group-hover:translate-x-2 transition-transform text-sm md:text-base">
                                     <span>Get Started</span>
                                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -40,16 +40,16 @@
                             <!-- Manual Browse Option -->
                             <button 
                                 wire:click="closeModal"
-                                class="group p-8 border-2 border-gray-200 rounded-2xl hover:border-primary-500 hover:shadow-xl transition-all duration-300 text-left"
+                                class="group p-6 md:p-8 border-2 border-gray-200 rounded-2xl hover:border-primary-500 hover:shadow-xl transition-all duration-300 text-left"
                             >
-                                <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-4 w-16 h-16 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-3 md:p-4 w-14 h-14 md:w-16 md:h-16 mb-4 md:mb-6 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <svg class="w-7 h-7 md:w-8 md:h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Let Me Browse Lawyers</h3>
-                                <p class="text-gray-600 mb-4">Explore our directory of verified lawyers using filters and search to find the right match.</p>
-                                <div class="flex items-center text-primary-700 font-medium group-hover:translate-x-2 transition-transform">
+                                <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">Let Me Browse Lawyers</h3>
+                                <p class="text-sm md:text-base text-gray-600 mb-3 md:mb-4">Explore our directory of verified lawyers using filters and search to find the right match.</p>
+                                <div class="flex items-center text-primary-700 font-medium group-hover:translate-x-2 transition-transform text-sm md:text-base">
                                     <span>Browse Now</span>
                                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -60,53 +60,52 @@
                     </div>
                 @else
                     <!-- AI Chat Interface -->
-                    <div class="flex flex-col h-[80vh]">
+                    <div class="flex flex-col h-[95vh] sm:h-[80vh]">
                         <!-- Chat Header -->
-                        <div class="bg-gradient-to-br from-primary-700 to-accent-700 text-white p-6 flex items-center justify-between">
-                            <div class="flex items-center gap-4">
-                                <div class="bg-white/20 rounded-full p-3">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-gradient-to-br from-primary-700 to-accent-700 text-white p-4 md:p-6 flex items-center justify-between flex-shrink-0">
+                            <div class="flex items-center gap-3 md:gap-4">
+                                <div class="bg-white/20 rounded-full p-2 md:p-3">
+                                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="text-xl font-bold">AI Legal Assistant</h3>
-                                    <p class="text-sm text-primary-100">Helping you find the right lawyer</p>
+                                    <h3 class="text-lg md:text-xl font-bold">AI Legal Assistant</h3>
+                                    <p class="text-xs md:text-sm text-primary-100">Helping you find the right lawyer</p>
                                 </div>
                             </div>
                             <button wire:click="closeModal" class="text-white hover:bg-white/20 rounded-lg p-2 transition">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                             </button>
                         </div>
 
                         <!-- Chat Messages -->
-                        <!-- Chat Messages -->
-                        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50" id="chatMessages">
+                        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-gray-50" id="chatMessages">
                             <!-- Initial AI greeting -->
                             <div class="flex justify-start">
-                                <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-6 py-3 max-w-[80%] shadow-sm">
+                                <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-4 md:px-6 py-2.5 md:py-3 max-w-[85%] md:max-w-[80%] shadow-sm">
                                     <p class="text-sm md:text-base text-gray-800">{{ \App\Models\AISetting::get('ai_greeting', 'Hello! I\'m here to help you find the right lawyer. Can you describe your legal concern?') }}</p>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Chat Input -->
-                        <div class="p-6 bg-white border-t border-gray-200">
-                            <form onsubmit="event.preventDefault(); sendMessageToAI(document.getElementById('aiChatInput').value);" class="flex gap-3">
+                        <div class="p-4 md:p-6 bg-white border-t border-gray-200 flex-shrink-0">
+                            <form onsubmit="event.preventDefault(); sendMessageToAI(document.getElementById('aiChatInput').value);" class="flex gap-2 md:gap-3">
                                 <input 
                                     type="text"
                                     id="aiChatInput"
                                     placeholder="Type your message..."
-                                    class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                    class="flex-1 px-3 md:px-4 py-2.5 md:py-3 text-sm md:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 >
                                 <button 
                                     type="submit"
                                     id="aiSendBtn"
-                                    class="bg-primary-700 text-white px-6 py-3 rounded-xl hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    class="bg-primary-700 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                 >
-                                    <span class="hidden md:inline">Send</span>
+                                    <span class="hidden sm:inline text-sm md:text-base">Send</span>
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                                     </svg>
@@ -613,20 +612,21 @@
             if (!chatContainer) return;
             
             const buttonHtml = `
-                <div class="p-4 bg-primary-50 border-t border-primary-200 mt-4" id="recommendationButton">
+                <div class="flex justify-center px-4 py-2" id="recommendationButton">
                     <button 
                         onclick="window.applyRecommendations()"
-                        class="w-full bg-gradient-to-r from-primary-700 to-accent-700 text-white px-6 py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                        class="w-full max-w-md bg-gradient-to-r from-primary-700 to-accent-700 text-white px-6 py-3 md:py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm md:text-base"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
-                        <span>View Filtered Lawyers (${window.aiRecommendations.length} specializations)</span>
+                        <span>View Recommended Lawyers (${window.aiRecommendations.length})</span>
                     </button>
                 </div>
             `;
-            chatContainer.parentElement.insertAdjacentHTML('beforeend', buttonHtml);
+            chatContainer.insertAdjacentHTML('beforeend', buttonHtml);
+            window.scrollToBottom();
         };
         
         window.applyRecommendations = function() {
