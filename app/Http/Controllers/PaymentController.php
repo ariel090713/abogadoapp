@@ -541,7 +541,7 @@ class PaymentController extends Controller
         }
 
         // Find transaction by payment_intent_id
-        $transaction = \App\Models\Transaction::where('payment_intent_id', $paymentIntentId)->first();
+        $transaction = \App\Models\Transaction::where('paymongo_payment_intent_id', $paymentIntentId)->first();
         
         if (!$transaction) {
             Log::warning('Transaction not found for payment intent', [
@@ -622,7 +622,7 @@ class PaymentController extends Controller
             return;
         }
 
-        $transaction = \App\Models\Transaction::where('payment_intent_id', $paymentIntentId)->first();
+        $transaction = \App\Models\Transaction::where('paymongo_payment_intent_id', $paymentIntentId)->first();
         
         if (!$transaction) {
             Log::warning('Transaction not found for failed payment', [
@@ -641,17 +641,22 @@ class PaymentController extends Controller
             return;
         }
 
-        // CRITICAL: Update ONLY transaction table
-        // Consultation status remains 'payment_pending' - don't change it
+        // CRITICAL: Update transaction AND consultation status
         \Illuminate\Support\Facades\DB::transaction(function () use ($transaction, $consultation) {
             // Update transaction status
             $transaction->update([
                 'status' => 'failed',
             ]);
             
+            // Update consultation status to payment_failed
+            $consultation->update([
+                'status' => 'payment_failed',
+            ]);
+            
             Log::info('Payment failed via webhook', [
                 'transaction_id' => $transaction->id,
                 'consultation_id' => $consultation->id,
+                'consultation_status' => 'payment_failed',
             ]);
         });
 

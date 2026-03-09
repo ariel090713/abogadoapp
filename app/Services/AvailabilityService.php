@@ -52,16 +52,33 @@ class AvailabilityService
      */
     private function hasConflictingConsultation(LawyerProfile $lawyer, Carbon $dateTime, int $duration): bool
     {
+        // Add 15-minute buffer after consultation for lawyer's break time
+        $bufferMinutes = 15;
         $endTime = $dateTime->copy()->addMinutes($duration);
+        $endTimeWithBuffer = $endTime->copy()->addMinutes($bufferMinutes);
 
-        // Check for conflicting consultations (including pending, payment_pending, awaiting_quote_approval)
+        // Check for conflicting consultations
+        // Include all statuses that represent active/upcoming bookings
         $conflictingConsultations = Consultation::where('lawyer_id', $lawyer->user_id)
-            ->whereIn('status', ['scheduled', 'pending', 'payment_pending', 'awaiting_quote_approval', 'in_progress'])
+            ->whereIn('status', [
+                'pending',                    // Waiting for lawyer approval
+                'accepted',                   // Lawyer accepted, waiting for payment
+                'payment_pending',            // Waiting for payment
+                'payment_processing',         // Payment being processed
+                'scheduled',                  // Paid and scheduled
+                'awaiting_quote_approval',    // Document review quote sent
+                'in_progress'                 // Currently ongoing
+            ])
             ->whereNotNull('scheduled_at')
-            ->where(function ($query) use ($dateTime, $endTime) {
-                // Consultation starts before requested time ends AND ends after requested time starts
-                $query->where('scheduled_at', '<', $endTime)
-                      ->whereRaw('DATE_ADD(scheduled_at, INTERVAL duration MINUTE) > ?', [$dateTime]);
+            ->where(function ($query) use ($dateTime, $endTimeWithBuffer, $bufferMinutes) {
+                // Check if requested time conflicts with existing consultation + buffer
+                // Existing consultation end time (with buffer) must be before requested start
+                // OR existing consultation start time must be after requested end (with buffer)
+                $query->where(function ($q) use ($dateTime, $endTimeWithBuffer, $bufferMinutes) {
+                    // Requested time starts before existing consultation ends (with buffer)
+                    $q->where('scheduled_at', '<', $endTimeWithBuffer)
+                      ->whereRaw('DATE_ADD(scheduled_at, INTERVAL (duration + ?) MINUTE) > ?', [$bufferMinutes, $dateTime]);
+                });
             })
             ->exists();
         
