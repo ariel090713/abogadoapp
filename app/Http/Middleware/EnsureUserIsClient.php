@@ -15,8 +15,21 @@ class EnsureUserIsClient
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || !auth()->user()->isClient()) {
-            abort(403, 'Unauthorized access. Client privileges required.');
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $user = auth()->user();
+
+        if (!$user->isClient()) {
+            // Redirect to appropriate dashboard based on user role
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->isLawyer()) {
+                return redirect()->route('lawyer.dashboard');
+            }
+            
+            return redirect()->route('dashboard');
         }
 
         return $next($request);

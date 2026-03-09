@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming Soon - {{ config('app.name') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-white">
-    <!-- Navbar -->
-    <x-guest-navbar />
-
+<div class="min-h-screen bg-white">
     <!-- Coming Soon Content -->
     <div class="min-h-screen flex items-center justify-center px-4 py-20">
         <div class="max-w-2xl mx-auto text-center">
@@ -72,5 +61,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>

@@ -15,8 +15,21 @@ class EnsureUserIsLawyer
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || !auth()->user()->isLawyer()) {
-            abort(403, 'Unauthorized access. Lawyer privileges required.');
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $user = auth()->user();
+
+        if (!$user->isLawyer()) {
+            // Redirect to appropriate dashboard based on user role
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->isClient()) {
+                return redirect()->route('client.dashboard');
+            }
+            
+            return redirect()->route('dashboard');
         }
 
         return $next($request);

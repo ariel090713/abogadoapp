@@ -15,8 +15,21 @@ class EnsureUserIsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || !auth()->user()->isAdmin()) {
-            abort(403, 'Unauthorized access. Admin privileges required.');
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $user = auth()->user();
+
+        if (!$user->isAdmin()) {
+            // Redirect to appropriate dashboard based on user role
+            if ($user->isLawyer()) {
+                return redirect()->route('lawyer.dashboard');
+            } elseif ($user->isClient()) {
+                return redirect()->route('client.dashboard');
+            }
+            
+            return redirect()->route('dashboard');
         }
 
         return $next($request);

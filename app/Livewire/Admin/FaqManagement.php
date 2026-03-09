@@ -18,6 +18,10 @@ class FaqManagement extends Component
     public $editingId = null;
     public $searchQuery = '';
     public $filterCategory = 'all';
+    
+    // Delete Confirmation
+    public $showDeleteModal = false;
+    public $deleteItemId = null;
 
     protected $rules = [
         'question' => 'required|string|max:255',
@@ -69,6 +73,28 @@ class FaqManagement extends Component
     public function cancelEdit()
     {
         $this->reset(['question', 'answer', 'category', 'order', 'is_published', 'editingId']);
+    }
+
+    public function confirmDelete($id)
+    {
+        $this->deleteItemId = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function cancelDelete()
+    {
+        $this->showDeleteModal = false;
+        $this->deleteItemId = null;
+    }
+
+    public function executeDelete()
+    {
+        if ($this->deleteItemId) {
+            Faq::findOrFail($this->deleteItemId)->delete();
+            session()->flash('success', 'FAQ deleted successfully');
+            $this->showDeleteModal = false;
+            $this->deleteItemId = null;
+        }
     }
 
     public function delete($id)

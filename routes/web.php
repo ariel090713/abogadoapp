@@ -33,13 +33,8 @@ Route::get('/about', \App\Livewire\AboutUs::class)->name('about');
 Route::get('/contact', \App\Livewire\ContactUs::class)->name('contact');
 
 // Coming Soon Pages
-Route::get('/webinars', function () {
-    return view('pages.coming-soon');
-})->name('webinars');
-
-Route::get('/community', function () {
-    return view('pages.coming-soon');
-})->name('community');
+Route::get('/webinars', \App\Livewire\ComingSoon::class)->name('webinars');
+Route::get('/community', \App\Livewire\ComingSoon::class)->name('community');
 
 // Document Routes (Public - Browse without login)
 Route::get('/documents', \App\Livewire\BrowseDocuments::class)->name('documents.browse');

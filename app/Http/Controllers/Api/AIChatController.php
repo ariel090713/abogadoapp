@@ -104,7 +104,8 @@ Otherwise, just have a natural conversation to understand their needs better.";
                         $json = json_decode($matches[0], true);
 
                         if ($json && isset($json['specializations'])) {
-                            $recommendations = $json['specializations'];
+                            // Limit to top 3 recommendations
+                            $recommendations = array_slice($json['specializations'], 0, 3);
                             $aiMessage = $json['explanation'] ?? 'Based on your concern, I recommend these practice areas. Click "View Filtered Lawyers" to see lawyers who specialize in these areas.';
                         }
                     } catch (\Exception $e) {

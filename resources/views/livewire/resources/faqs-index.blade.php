@@ -13,7 +13,7 @@
 
     <!-- Search & Filter Section -->
     <section class="py-8 border-b border-gray-200">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Search Bar -->
             <div class="mb-6">
                 <div class="relative">
@@ -51,7 +51,7 @@
 
     <!-- FAQs Section -->
     <section class="py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @if($faqs->isEmpty())
                 <div class="text-center py-12">
                     <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +101,7 @@
 
     <!-- Contact CTA -->
     <section class="py-16 bg-gray-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl font-bold text-gray-900 mb-4">Still have questions?</h2>
             <p class="text-xl text-gray-600 mb-8">Our team is here to help you</p>
             <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-8 py-3 bg-primary-700 text-white rounded-xl hover:bg-primary-800 transition font-medium">
