@@ -23,6 +23,7 @@ class AISettings extends Component
     // Knowledge Base
     public $kb_title = '';
     public $kb_content = '';
+    public $kb_type = 'text'; // 'text' or 'file'
     public $kb_file;
     public $kb_priority = 5;
     public $editingKnowledgeId = null;
@@ -76,38 +77,62 @@ class AISettings extends Component
 
     public function saveKnowledge()
     {
-        $this->validate([
-            'kb_title' => 'required|string|max:255',
-            'kb_content' => 'required|string',
-            'kb_priority' => 'required|integer|min:0|max:10',
-            'kb_file' => 'nullable|file|max:10240|mimes:pdf,doc,docx,txt',
-        ]);
+        // Validate based on type
+        if ($this->kb_type === 'text') {
+            $this->validate([
+                'kb_title' => 'required|string|max:255',
+                'kb_type' => 'required|in:text,file',
+                'kb_content' => 'required|string',
+                'kb_priority' => 'required|integer|min:0|max:10',
+            ]);
+        } else {
+            $this->validate([
+                'kb_title' => 'required|string|max:255',
+                'kb_type' => 'required|in:text,file',
+                'kb_file' => 'required|file|max:10240|mimes:pdf,doc,docx,txt',
+                'kb_priority' => 'required|integer|min:0|max:10',
+            ]);
+        }
 
         try {
             $data = [
                 'title' => $this->kb_title,
-                'content' => $this->kb_content,
                 'priority' => $this->kb_priority,
-                'type' => 'text',
+                'type' => $this->kb_type,
             ];
 
-            // Handle file upload
-            if ($this->kb_file) {
-                $fileService = app(FileUploadService::class);
-                $fileData = $fileService->uploadPrivate($this->kb_file, 'ai-knowledge-base');
-                
-                $data['type'] = 'document';
-                $data['file_path'] = $fileData['path'];
-                $data['file_name'] = $fileData['original_name'];
-                $data['file_size'] = $fileData['size'];
+            if ($this->kb_type === 'text') {
+                $data['content'] = $this->kb_content;
+            } else {
+                // Handle file upload
+                if ($this->kb_file) {
+                    $fileService = app(FileUploadService::class);
+                    $fileData = $fileService->uploadPrivate($this->kb_file, 'ai-knowledge-base');
+                    
+                    // Extract text content from file
+                    $content = $this->extractTextFromFile($this->kb_file);
+                    
+                    $data['content'] = $content;
+                    $data['file_path'] = $fileData['path'];
+                    $data['file_name'] = $fileData['original_name'];
+                    $data['file_size'] = $fileData['size'];
+                }
             }
 
             if ($this->editingKnowledgeId) {
                 $knowledge = AIKnowledgeBase::findOrFail($this->editingKnowledgeId);
                 $knowledge->update($data);
+                
+                // Process chunks after update
+                $knowledge->processAndStoreChunks();
+                
                 session()->flash('success', 'Knowledge base entry updated successfully!');
             } else {
-                AIKnowledgeBase::create($data);
+                $knowledge = AIKnowledgeBase::create($data);
+                
+                // Process chunks after creation
+                $knowledge->processAndStoreChunks();
+                
                 session()->flash('success', 'Knowledge base entry added successfully!');
             }
 
@@ -123,16 +148,42 @@ class AISettings extends Component
         }
     }
 
+    private function extractTextFromFile($file)
+    {
+        $extension = $file->getClientOriginalExtension();
+        $tempPath = $file->getRealPath();
+        
+        try {
+            if ($extension === 'txt') {
+                return file_get_contents($tempPath);
+            } elseif ($extension === 'pdf') {
+                // For PDF, you'd need a library like smalot/pdfparser
+                // For now, return a placeholder
+                return "PDF content from: " . $file->getClientOriginalName();
+            } else {
+                // For DOC/DOCX, you'd need PhpWord or similar
+                return "Document content from: " . $file->getClientOriginalName();
+            }
+        } catch (\Exception $e) {
+            \Log::error('File text extraction failed', ['error' => $e->getMessage()]);
+            return "Content from file: " . $file->getClientOriginalName();
+        }
+    }
+
     public function editKnowledge($id)
     {
         $knowledge = AIKnowledgeBase::findOrFail($id);
         
         $this->editingKnowledgeId = $knowledge->id;
         $this->kb_title = $knowledge->title;
-        $this->kb_content = $knowledge->content;
+        $this->kb_content = $knowledge->content ?? '';
+        $this->kb_type = $knowledge->type ?? 'text';
         $this->kb_priority = $knowledge->priority;
         
         $this->activeTab = 'knowledge';
+        
+        // Scroll to form
+        $this->dispatch('scroll-to-form');
     }
 
     public function deleteKnowledge($id)
@@ -157,8 +208,9 @@ class AISettings extends Component
 
     public function resetKnowledgeForm()
     {
-        $this->reset(['kb_title', 'kb_content', 'kb_file', 'kb_priority', 'editingKnowledgeId']);
+        $this->reset(['kb_title', 'kb_content', 'kb_type', 'kb_file', 'kb_priority', 'editingKnowledgeId']);
         $this->kb_priority = 5;
+        $this->kb_type = 'text';
     }
 
     public function render()

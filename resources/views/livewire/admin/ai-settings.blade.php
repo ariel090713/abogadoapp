@@ -136,7 +136,7 @@
                     {{ $editingKnowledgeId ? 'Edit' : 'Add' }} Knowledge Base Entry
                 </h2>
                 
-                <form wire:submit.prevent="saveKnowledge" class="space-y-6">
+                <form wire:submit.prevent="saveKnowledge" class="space-y-6" id="knowledge-form">
                     <!-- Title -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
@@ -149,37 +149,70 @@
                         @error('kb_title') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
                     </div>
 
-                    <!-- Content -->
+                    <!-- Type Dropdown -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
-                        <textarea 
-                            wire:model="kb_content"
-                            rows="10"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm"
-                            placeholder="Enter detailed information that the AI should know..."
-                        ></textarea>
-                        <p class="text-sm text-gray-500 mt-1">AI will use this information to answer questions accurately</p>
-                        @error('kb_content') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
-                    </div>
-
-                    <!-- File Upload (Optional) -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Document (Optional)</label>
-                        <input 
-                            type="file" 
-                            wire:model="kb_file"
-                            accept=".pdf,.doc,.docx,.txt"
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Entry Type</label>
+                        <select 
+                            wire:model.live="kb_type"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                         >
-                        <p class="text-sm text-gray-500 mt-1">Supported: PDF, DOC, DOCX, TXT (Max 10MB)</p>
-                        @error('kb_file') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
-                        
-                        @if($kb_file)
-                            <div class="mt-2 text-sm text-green-600">
-                                File selected: {{ $kb_file->getClientOriginalName() }}
-                            </div>
-                        @endif
+                            <option value="text">Text Content</option>
+                            <option value="file">File Upload</option>
+                        </select>
+                        <p class="text-sm text-gray-500 mt-1">Choose whether to enter text directly or upload a document</p>
+                        @error('kb_type') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
                     </div>
+
+                    <!-- Content (shown only for text type) -->
+                    @if($kb_type === 'text')
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                            <textarea 
+                                wire:model="kb_content"
+                                rows="10"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm"
+                                placeholder="Enter detailed information that the AI should know..."
+                            ></textarea>
+                            <p class="text-sm text-gray-500 mt-1">AI will use this information to answer questions accurately</p>
+                            @error('kb_content') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
+                        </div>
+                    @endif
+
+                    <!-- File Upload (shown only for file type) -->
+                    @if($kb_type === 'file')
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Document</label>
+                            <input 
+                                type="file" 
+                                wire:model="kb_file"
+                                accept=".pdf,.doc,.docx,.txt"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                            >
+                            <p class="text-sm text-gray-500 mt-1">Supported: PDF, DOC, DOCX, TXT (Max 10MB)</p>
+                            @error('kb_file') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
+                            
+                            @if($kb_file)
+                                <div class="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                    <div class="flex items-center gap-2 text-sm text-green-700">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span>File selected: {{ $kb_file->getClientOriginalName() }}</span>
+                                    </div>
+                                </div>
+                            @endif
+                            
+                            <div wire:loading wire:target="kb_file" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                <div class="flex items-center gap-2 text-sm text-blue-700">
+                                    <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span>Uploading file...</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Priority -->
                     <div>
@@ -311,3 +344,19 @@
         </div>
     @endif
 </div>
+
+@push('scripts')
+<script>
+    // Scroll to form when editing
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('scroll-to-form', () => {
+            setTimeout(() => {
+                const form = document.getElementById('knowledge-form');
+                if (form) {
+                    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        });
+    });
+</script>
+@endpush

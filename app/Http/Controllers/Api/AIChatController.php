@@ -15,15 +15,18 @@ class AIChatController extends Controller
     public function chat(Request $request, GeminiAIService $aiService)
     {
         // Validate request
-        $request->validate([
+        $validated = $request->validate([
             'message' => 'required|string|max:5000',
             'conversation' => 'required|array|max:50', // Max 50 messages in conversation
             'conversation.*.role' => 'required|in:user,assistant',
             'conversation.*.content' => 'required|string|max:5000',
         ]);
 
+        // Get conversation from validated data
+        $conversation = $validated['conversation'];
+
         // Additional security: Check conversation length
-        if (count($request->conversation) > 50) {
+        if (count($conversation) > 50) {
             return response()->json([
                 'success' => false,
                 'message' => 'Conversation too long. Please start a new conversation.',
@@ -31,7 +34,8 @@ class AIChatController extends Controller
         }
 
         // Additional security: Validate last message is from user
-        $lastMessage = end($request->conversation);
+        $conversationCopy = $conversation;
+        $lastMessage = end($conversationCopy);
         if ($lastMessage['role'] !== 'user') {
             return response()->json([
                 'success' => false,
@@ -40,7 +44,6 @@ class AIChatController extends Controller
         }
 
         try {
-            $conversation = $request->conversation;
             
             // Get AI settings
             $aiName = AISetting::get('ai_name', 'Legal Assistant');
