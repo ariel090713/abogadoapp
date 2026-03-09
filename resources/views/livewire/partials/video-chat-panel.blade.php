@@ -1,9 +1,11 @@
-<div class="flex flex-col h-full">
-<div style="flex-shrink: 0; padding: 1rem; border-bottom: 1px solid #e5e7eb;">
+<div class="flex flex-col h-full overflow-hidden">
+<!-- Header - Desktop only -->
+<div class="hidden lg:block flex-shrink-0 px-4 py-3 border-b border-gray-200">
     <h3 class="font-semibold text-gray-900">Chat</h3>
 </div>
 
-<div id="messages-container" style="flex: 1 1 0%; min-height: 0; overflow-y: auto; padding: 1rem;" wire:ignore>
+<!-- Messages Container -->
+<div id="messages-container" class="flex-1 overflow-y-auto px-4 py-3" wire:ignore>
     <div id="messages-wrapper" class="space-y-3">
         <!-- Messages will be rendered here via JavaScript -->
     </div>
@@ -104,8 +106,8 @@
 </script>
 
 <!-- Message Input -->
-<div style="flex-shrink: 0; padding: 1rem; border-top: 1px solid #e5e7eb;">
-    @if($videoStatus === 'active')
+<div class="flex-shrink-0 px-4 py-3 border-t border-gray-200 bg-white">
+    <!-- Debug: Status = {{ $videoStatus }} -->
     <form wire:submit.prevent="sendMessage" class="space-y-3">
         <!-- File Attachments Preview -->
         @if(!empty($attachments))
@@ -163,9 +165,4 @@
             </button>
         </div>
     </form>
-    @else
-    <div class="text-center text-sm text-gray-500 py-4">
-        Chat is {{ $videoStatus === 'waiting' ? 'not yet available' : 'now read-only' }}
-    </div>
-    @endif
 </div>

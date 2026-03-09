@@ -184,7 +184,10 @@
                             </svg>
                         </button>
                         
-                        <button id="toggle-chat" class="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-white transition lg:hidden">
+                        <button 
+                            @click="$dispatch('toggle-chat')"
+                            class="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-white transition lg:hidden"
+                        >
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                             </svg>
@@ -225,11 +228,18 @@
             </div>
 
             <!-- Chat Side Panel (Desktop) / Full Screen Popup (Mobile) -->
-            <div id="chat-side-panel" class="hidden lg:flex lg:w-96 flex-shrink-0 bg-white border-l border-gray-200 flex-col fixed lg:relative inset-0 lg:inset-auto z-50 lg:z-auto">
+            <div 
+                x-data="{ chatOpen: false }" 
+                @toggle-chat.window="chatOpen = true"
+                id="chat-side-panel" 
+                class="lg:flex lg:w-96 flex-shrink-0 bg-white border-l border-gray-200 flex-col fixed lg:relative inset-0 lg:inset-auto z-50 lg:z-auto"
+                :class="{ 'hidden': !chatOpen && window.innerWidth < 1024, 'flex': chatOpen || window.innerWidth >= 1024 }"
+                wire:ignore.self
+            >
                 <!-- Close button for mobile -->
                 <div class="lg:hidden flex items-center justify-between p-4 border-b border-gray-200 bg-white">
                     <h3 class="font-semibold text-gray-900">Chat</h3>
-                    <button id="close-chat-mobile" class="text-gray-600 hover:text-gray-900">
+                    <button @click="chatOpen = false" class="text-gray-600 hover:text-gray-900">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
@@ -292,24 +302,6 @@
                 }, 800);
             }
 
-            // Toggle chat panel on mobile
-            const toggleChatBtn = document.getElementById('toggle-chat');
-            const closeChatBtn = document.getElementById('close-chat-mobile');
-            const chatPanel = document.getElementById('chat-side-panel');
-            
-            if (toggleChatBtn) {
-                toggleChatBtn.addEventListener('click', function() {
-                    chatPanel.classList.remove('hidden');
-                    chatPanel.classList.add('flex');
-                });
-            }
-            
-            if (closeChatBtn) {
-                closeChatBtn.addEventListener('click', function() {
-                    chatPanel.classList.add('hidden');
-                    chatPanel.classList.remove('flex');
-                });
-            }
             
             // Initialize Pusher if not already initialized
             if (typeof window.pusher === 'undefined') {

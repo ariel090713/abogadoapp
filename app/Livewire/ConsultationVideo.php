@@ -345,11 +345,11 @@ class ConsultationVideo extends Component
             return;
         }
 
-        // SECURITY: Check if video is active
+        // SECURITY: Check if video is active or ended (allow chat after video ends)
         $this->updateVideoStatus();
         
-        if ($this->videoStatus !== 'active') {
-            session()->flash('error', 'Video consultation is not active yet or has ended.');
+        if ($this->videoStatus === 'waiting') {
+            session()->flash('error', 'Video consultation has not started yet.');
             return;
         }
 

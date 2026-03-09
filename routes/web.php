@@ -158,6 +158,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureOnboardingComp
         Route::get('/reports', \App\Livewire\Admin\Reports::class)->name('reports');
         Route::get('/content', \App\Livewire\Admin\ContentManagement::class)->name('content');
         Route::get('/specializations', \App\Livewire\Admin\SpecializationManagement::class)->name('specializations');
+        Route::get('/templates', \App\Livewire\Admin\TemplateManagement::class)->name('templates');
         Route::get('/faqs', \App\Livewire\Admin\FaqManagement::class)->name('faqs');
         Route::get('/settings', \App\Livewire\Admin\AISettings::class)->name('settings');
     });
