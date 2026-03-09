@@ -147,7 +147,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureOnboardingComp
         Route::get('/reports', \App\Livewire\Admin\Reports::class)->name('reports');
         Route::get('/content', \App\Livewire\Admin\ContentManagement::class)->name('content');
         Route::get('/specializations', \App\Livewire\Admin\SpecializationManagement::class)->name('specializations');
-        Route::get('/settings', function () { return 'Admin Settings'; })->name('settings');
+        Route::get('/settings', \App\Livewire\Admin\AISettings::class)->name('settings');
     });
 
     // Booking Routes

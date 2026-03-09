@@ -30,14 +30,15 @@ class OngoingConsultationsSeeder extends Seeder
         $chatConsultation = Consultation::create([
             'client_id' => $client->id,
             'lawyer_id' => $lawyers[0]->id,
-            'type' => 'chat',
+            'consultation_type' => 'chat',
             'duration' => 60,
             'status' => 'in_progress',
             'scheduled_at' => now()->subHours(2),
             'started_at' => now()->subHours(2),
             'title' => 'Employment Contract Review',
-            'description' => 'Need help reviewing my employment contract and understanding my rights.',
-            'amount' => 1500,
+            'client_notes' => 'Need help reviewing my employment contract and understanding my rights.',
+            'rate' => 1500,
+            'total_amount' => 1500,
         ]);
         
         // Create transaction for chat consultation
@@ -46,11 +47,9 @@ class OngoingConsultationsSeeder extends Seeder
             'user_id' => $client->id,
             'amount' => 1500,
             'platform_fee' => 0,
-            'lawyer_amount' => 1500,
             'payment_method' => 'gcash',
-            'payment_intent_id' => 'pi_chat_' . $faker->uuid(),
+            'paymongo_payment_intent_id' => 'pi_chat_' . $faker->uuid(),
             'status' => 'completed',
-            'paid_at' => now()->subHours(3),
         ]);
         
         // Create long conversation (50 messages over 2 hours)
@@ -140,15 +139,15 @@ class OngoingConsultationsSeeder extends Seeder
         $videoConsultation = Consultation::create([
             'client_id' => $client->id,
             'lawyer_id' => $lawyers[1]->id,
-            'type' => 'video',
+            'consultation_type' => 'video',
             'duration' => 30,
             'status' => 'in_progress',
             'scheduled_at' => now()->subMinutes(15),
             'started_at' => now()->subMinutes(15),
             'title' => 'Property Dispute Consultation',
-            'description' => 'Boundary dispute with neighbor regarding property line.',
-            'amount' => 1200,
-            'video_room_name' => 'room_' . $faker->uuid(),
+            'client_notes' => 'Boundary dispute with neighbor regarding property line.',
+            'rate' => 1200,
+            'total_amount' => 1200,
         ]);
         
         // Create transaction for video consultation
@@ -157,11 +156,9 @@ class OngoingConsultationsSeeder extends Seeder
             'user_id' => $client->id,
             'amount' => 1200,
             'platform_fee' => 0,
-            'lawyer_amount' => 1200,
             'payment_method' => 'card',
-            'payment_intent_id' => 'pi_video_' . $faker->uuid(),
+            'paymongo_payment_intent_id' => 'pi_video_' . $faker->uuid(),
             'status' => 'completed',
-            'paid_at' => now()->subMinutes(30),
         ]);
         
         // Add some chat messages during video call
@@ -196,7 +193,7 @@ class OngoingConsultationsSeeder extends Seeder
         // 3. COMPLETED CONSULTATIONS WITH TRANSACTIONS (for transaction history)
         $completedConsultations = [
             [
-                'type' => 'chat',
+                'consultation_type' => 'chat',
                 'duration' => 30,
                 'title' => 'Contract Review - Freelance Agreement',
                 'amount' => 750,
@@ -204,7 +201,7 @@ class OngoingConsultationsSeeder extends Seeder
                 'completed_days_ago' => 5,
             ],
             [
-                'type' => 'video',
+                'consultation_type' => 'video',
                 'duration' => 60,
                 'title' => 'Family Law - Child Custody Advice',
                 'amount' => 2000,
@@ -212,7 +209,7 @@ class OngoingConsultationsSeeder extends Seeder
                 'completed_days_ago' => 10,
             ],
             [
-                'type' => 'chat',
+                'consultation_type' => 'chat',
                 'duration' => 15,
                 'title' => 'Quick Legal Question - Lease Agreement',
                 'amount' => 500,
@@ -220,7 +217,7 @@ class OngoingConsultationsSeeder extends Seeder
                 'completed_days_ago' => 15,
             ],
             [
-                'type' => 'video',
+                'consultation_type' => 'video',
                 'duration' => 30,
                 'title' => 'Business Formation Consultation',
                 'amount' => 1500,
@@ -228,7 +225,7 @@ class OngoingConsultationsSeeder extends Seeder
                 'completed_days_ago' => 20,
             ],
             [
-                'type' => 'chat',
+                'consultation_type' => 'chat',
                 'duration' => 60,
                 'title' => 'Employment Termination Issue',
                 'amount' => 1200,
@@ -244,15 +241,16 @@ class OngoingConsultationsSeeder extends Seeder
             $consultation = Consultation::create([
                 'client_id' => $client->id,
                 'lawyer_id' => $lawyer->id,
-                'type' => $data['type'],
+                'consultation_type' => $data['consultation_type'],
                 'duration' => $data['duration'],
                 'status' => 'completed',
                 'scheduled_at' => $scheduledAt,
                 'started_at' => $scheduledAt,
                 'completed_at' => $scheduledAt->copy()->addMinutes($data['duration']),
                 'title' => $data['title'],
-                'description' => 'Consultation regarding ' . strtolower($data['title']),
-                'amount' => $data['amount'],
+                'client_notes' => 'Consultation regarding ' . strtolower($data['title']),
+                'rate' => $data['amount'],
+                'total_amount' => $data['amount'],
             ]);
             
             // Create transaction
@@ -261,11 +259,9 @@ class OngoingConsultationsSeeder extends Seeder
                 'user_id' => $client->id,
                 'amount' => $data['amount'],
                 'platform_fee' => 0,
-                'lawyer_amount' => $data['amount'],
                 'payment_method' => $data['payment_method'],
-                'payment_intent_id' => 'pi_completed_' . $faker->uuid(),
+                'paymongo_payment_intent_id' => 'pi_completed_' . $faker->uuid(),
                 'status' => 'completed',
-                'paid_at' => $scheduledAt->copy()->subHours(2),
             ]);
             
             // Add some messages

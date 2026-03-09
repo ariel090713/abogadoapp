@@ -26,6 +26,15 @@ class Dashboard extends Component
             'total_revenue' => Transaction::where('status', 'captured')->sum('platform_fee'),
             'today_revenue' => Transaction::where('status', 'captured')->whereDate('processed_at', today())->sum('platform_fee'),
             'month_revenue' => Transaction::where('status', 'captured')->whereMonth('processed_at', now()->month)->sum('platform_fee'),
+            
+            // Additional stats
+            'pending_refunds' => \App\Models\Refund::where('status', 'pending')->count(),
+            'total_reviews' => \App\Models\Review::count(),
+            'avg_rating' => \App\Models\Review::avg('rating') ?? 0,
+            'active_sessions' => Consultation::where('status', 'in_progress')->count(),
+            'cancelled_consultations' => Consultation::where('status', 'cancelled')->count(),
+            'new_users_today' => User::whereDate('created_at', today())->count(),
+            'new_users_week' => User::where('created_at', '>=', now()->subDays(7))->count(),
         ];
 
         // Recent activities
@@ -56,6 +65,81 @@ class Dashboard extends Component
             ];
         }
 
+        // Revenue trend (last 7 days)
+        $revenueTrend = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $revenueTrend[] = [
+                'date' => $date->format('M d'),
+                'amount' => Transaction::where('status', 'captured')
+                    ->whereDate('processed_at', $date)
+                    ->sum('platform_fee'),
+            ];
+        }
+
+        // Activity timeline (last 10 activities)
+        $activities = collect();
+        
+        // Recent users
+        User::latest()->take(3)->get()->each(function($user) use ($activities) {
+            $activities->push([
+                'type' => 'user_registered',
+                'icon' => 'user-plus',
+                'color' => 'blue',
+                'title' => 'New User Registered',
+                'description' => $user->name . ' joined as ' . $user->role,
+                'time' => $user->created_at,
+            ]);
+        });
+
+        // Recent consultations
+        Consultation::latest()->take(3)->get()->each(function($consultation) use ($activities) {
+            $activities->push([
+                'type' => 'consultation',
+                'icon' => 'calendar',
+                'color' => 'green',
+                'title' => 'New Consultation',
+                'description' => ucfirst($consultation->consultation_type) . ' - ' . ucfirst($consultation->status),
+                'time' => $consultation->created_at,
+            ]);
+        });
+
+        // Recent transactions
+        Transaction::where('status', 'captured')->latest()->take(3)->get()->each(function($transaction) use ($activities) {
+            $activities->push([
+                'type' => 'payment',
+                'icon' => 'currency',
+                'color' => 'accent',
+                'title' => 'Payment Received',
+                'description' => '₱' . number_format($transaction->amount, 2) . ' via ' . ucfirst($transaction->payment_method),
+                'time' => $transaction->processed_at,
+            ]);
+        });
+
+        $activities = $activities->sortByDesc('time')->take(10)->values();
+
+        // System health
+        $systemHealth = [
+            'database' => 'healthy',
+            'storage' => 'healthy',
+            'queue' => 'healthy',
+        ];
+
+        try {
+            \DB::connection()->getPdo();
+        } catch (\Exception $e) {
+            $systemHealth['database'] = 'error';
+        }
+
+        // Consultation status breakdown
+        $consultationBreakdown = [
+            'pending' => Consultation::where('status', 'pending')->count(),
+            'scheduled' => Consultation::where('status', 'scheduled')->count(),
+            'in_progress' => Consultation::where('status', 'in_progress')->count(),
+            'completed' => Consultation::where('status', 'completed')->count(),
+            'cancelled' => Consultation::where('status', 'cancelled')->count(),
+        ];
+
         return view('livewire.admin.dashboard', [
             'stats' => $stats,
             'recentUsers' => $recentUsers,
@@ -63,6 +147,10 @@ class Dashboard extends Component
             'recentConsultations' => $recentConsultations,
             'pendingPayouts' => $pendingPayouts,
             'userGrowth' => $userGrowth,
+            'revenueTrend' => $revenueTrend,
+            'activities' => $activities,
+            'systemHealth' => $systemHealth,
+            'consultationBreakdown' => $consultationBreakdown,
         ])->layout('layouts.dashboard', ['title' => 'Admin Dashboard']);
     }
 

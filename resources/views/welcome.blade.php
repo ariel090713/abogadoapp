@@ -44,7 +44,7 @@
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('lawyers.search') }}" class="inline-flex items-center justify-center px-8 py-4 bg-white text-primary-700 rounded-xl font-semibold hover:bg-gray-50 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                        <span>Find a Lawyer</span>
+                        <span>Describe Your Legal Concern</span>
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                         </svg>

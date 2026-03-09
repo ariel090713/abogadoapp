@@ -19,6 +19,14 @@ class LawyerSearch extends Component
     public $sortBy = 'rating';
     public $viewMode = 'grid';
 
+    // AI Assistant properties
+    public $showAIModal = false;
+    public $aiMode = false;
+    public $conversation = [];
+    public $userMessage = '';
+    public $aiRecommendedSpecializations = [];
+    public $isAIThinking = false;
+
     protected $queryString = [
         'search' => ['except' => ''],
         'specializations' => ['except' => []], // Changed
@@ -26,6 +34,161 @@ class LawyerSearch extends Component
         'languages' => ['except' => []],
         'sortBy' => ['except' => 'rating'],
     ];
+
+    public function mount()
+    {
+        // Show AI modal on first visit (check if no filters are set)
+        if (empty($this->search) && empty($this->specializations) && empty($this->location) && empty($this->languages)) {
+            $this->showAIModal = true;
+        }
+    }
+
+    public function closeModal()
+    {
+        $this->showAIModal = false;
+        $this->aiMode = false;
+        $this->conversation = [];
+        $this->userMessage = '';
+    }
+
+    public function startAIChat()
+    {
+        $this->aiMode = true;
+
+        // Get AI greeting from settings
+        $aiName = \App\Models\AISetting::get('ai_name', 'Legal Assistant');
+        $greeting = \App\Models\AISetting::get('ai_greeting', 'Hello! I\'m here to help you find the right lawyer. Can you describe your legal concern?');
+
+        $this->conversation[] = [
+            'role' => 'assistant',
+            'content' => $greeting
+        ];
+    }
+
+    public function sendMessage()
+    {
+        if (empty(trim($this->userMessage))) {
+            return;
+        }
+
+        // Add user message to conversation
+        $this->conversation[] = [
+            'role' => 'user',
+            'content' => $this->userMessage
+        ];
+
+        $userInput = $this->userMessage;
+        $this->userMessage = '';
+        $this->isAIThinking = true;
+
+        try {
+            // Get AI settings
+            $aiName = \App\Models\AISetting::get('ai_name', 'Legal Assistant');
+            $personality = \App\Models\AISetting::get('ai_personality', 'Professional and helpful legal assistant');
+            $rules = \App\Models\AISetting::get('ai_rules', 'Be helpful and guide users to find the right lawyer');
+
+            // Get knowledge base context
+            $knowledgeContext = \App\Models\AIKnowledgeBase::getCombinedContext();
+
+            // Get available specializations
+            $specializations = \App\Models\Specialization::all()->map(function($spec) {
+                return [
+                    'name' => $spec->name,
+                    'slug' => $spec->slug,
+                    'description' => $spec->description ?? ''
+                ];
+            })->toArray();
+
+            // Build system prompt
+            $systemPrompt = "You are {$aiName}, a {$personality}.
+
+RULES:
+{$rules}
+
+KNOWLEDGE BASE:
+{$knowledgeContext}
+
+AVAILABLE SPECIALIZATIONS:
+" . collect($specializations)->map(function($spec) {
+    return "- {$spec['name']} (slug: {$spec['slug']}): {$spec['description']}";
+})->join("\n") . "
+
+Your task is to:
+1. Ask clarifying questions about the user's legal concern
+2. After understanding their concern, recommend the TOP 3 most relevant specializations
+3. When ready to recommend, respond with JSON format:
+{
+    \"ready\": true,
+    \"specializations\": [\"slug1\", \"slug2\", \"slug3\"],
+    \"explanation\": \"Brief explanation\"
+}
+
+Otherwise, just have a natural conversation to understand their needs better.";
+
+            // Call Gemini AI
+            $aiService = new \App\Services\GeminiAIService();
+            $response = $aiService->chat($this->conversation, $systemPrompt);
+
+            if ($response['success']) {
+                $aiMessage = $response['message'];
+
+                // Check if AI is ready to recommend
+                if (preg_match('/\{[\s\S]*"ready"[\s\S]*true[\s\S]*\}/', $aiMessage, $matches)) {
+                    try {
+                        $json = json_decode($matches[0], true);
+
+                        if ($json && isset($json['specializations'])) {
+                            $this->aiRecommendedSpecializations = $json['specializations'];
+
+                            // Add friendly message
+                            $this->conversation[] = [
+                                'role' => 'assistant',
+                                'content' => $json['explanation'] ?? 'Based on your concern, I recommend these practice areas. Click "View Filtered Lawyers" to see lawyers who specialize in these areas.'
+                            ];
+
+                            $this->isAIThinking = false;
+                            return;
+                        }
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to parse AI recommendation', ['error' => $e->getMessage()]);
+                    }
+                }
+
+                // Add AI response to conversation
+                $this->conversation[] = [
+                    'role' => 'assistant',
+                    'content' => $aiMessage
+                ];
+            } else {
+                $this->conversation[] = [
+                    'role' => 'assistant',
+                    'content' => 'I apologize, but I encountered an error. Please try browsing lawyers manually or try again.'
+                ];
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('AI Chat Error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $this->conversation[] = [
+                'role' => 'assistant',
+                'content' => 'I apologize, but I encountered an error. Please try browsing lawyers manually.'
+            ];
+        }
+
+        $this->isAIThinking = false;
+    }
+
+    public function applyAIFilters()
+    {
+        if (!empty($this->aiRecommendedSpecializations)) {
+            $this->specializations = $this->aiRecommendedSpecializations;
+            $this->closeModal();
+            $this->resetPage();
+        }
+    }
 
     public function updatingSearch()
     {
@@ -88,7 +251,7 @@ class LawyerSearch extends Component
         if (!empty($this->specializations)) {
             $query->whereHas('specializations', function ($q) {
                 $selectedSpecs = \App\Models\Specialization::whereIn('slug', $this->specializations)->get();
-                
+
                 $allIds = [];
                 foreach ($selectedSpecs as $spec) {
                     if ($spec->is_parent) {
@@ -100,7 +263,7 @@ class LawyerSearch extends Component
                         $allIds[] = $spec->id;
                     }
                 }
-                
+
                 $q->whereIn('specializations.id', array_unique($allIds));
             });
         }
@@ -141,13 +304,13 @@ class LawyerSearch extends Component
         }
 
         $lawyers = $query->paginate(30);
-        
+
         // Get all specializations with children
         $allSpecializations = Specialization::with('children')
             ->where('is_parent', true)
             ->orderBy('name')
             ->get();
-        
+
         // Filter specializations based on search
         if ($this->specializationSearch) {
             $searchTerm = strtolower($this->specializationSearch);
@@ -179,3 +342,4 @@ class LawyerSearch extends Component
         ])->layout('layouts.guest');
     }
 }
+
