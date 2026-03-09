@@ -151,7 +151,20 @@ class CaseDetails extends Component
                     'status' => $offer->consultation_type === 'document_review' ? 'in_progress' : 'scheduled',
                     'accepted_at' => now(),
                     'quote_accepted_at' => now(),
-                    'payment_status' => 'free',
+                ]);
+                
+                // Create a free transaction record for tracking
+                \App\Models\Transaction::create([
+                    'user_id' => $offer->client_id,
+                    'lawyer_id' => $offer->lawyer_id,
+                    'consultation_id' => $offer->id,
+                    'type' => 'consultation_payment',
+                    'amount' => 0,
+                    'platform_fee' => 0,
+                    'lawyer_payout' => 0,
+                    'status' => 'completed',
+                    'payment_method' => 'free',
+                    'processed_at' => now(),
                 ]);
                 
                 if ($offer->consultation_type === 'document_review') {

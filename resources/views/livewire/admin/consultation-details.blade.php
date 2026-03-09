@@ -80,8 +80,13 @@
                             {{ $consultation->status === 'completed' ? 'bg-green-100 text-green-800' : '' }}
                             {{ $consultation->status === 'cancelled' ? 'bg-red-100 text-red-800' : '' }}
                             {{ $consultation->status === 'payment_pending' ? 'bg-orange-100 text-orange-800' : '' }}
+                            {{ $consultation->status === 'payment_processing' ? 'bg-blue-100 text-blue-800 animate-pulse' : '' }}
                         ">
-                            {{ ucfirst(str_replace('_', ' ', $consultation->status)) }}
+                            @if($consultation->status === 'payment_processing')
+                                Payment Processing...
+                            @else
+                                {{ ucfirst(str_replace('_', ' ', $consultation->status)) }}
+                            @endif
                         </span>
                     </div>
                     <div>

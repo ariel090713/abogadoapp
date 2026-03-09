@@ -82,11 +82,22 @@ class FreshPaymentPendingSeeder extends Seeder
             'platform_fee' => 90,
             'total_amount' => 990,
             'status' => 'payment_pending',
-            'payment_status' => 'unpaid',
             'scheduled_at' => now()->addDays(2)->setTime(14, 0),
             'accepted_at' => now()->subMinutes(5),
             'payment_deadline' => now()->addMinutes(55), // 55 minutes left
             'client_notes' => 'Need urgent advice on wrongful termination case. My employer terminated me without proper notice.',
+        ]);
+
+        \App\Models\Transaction::create([
+            'consultation_id' => $consultation1->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 990,
+            'lawyer_payout' => 900,
+            'platform_fee' => 90,
+            'status' => 'pending',
+            'payment_method' => null,
         ]);
 
         // 2. Payment pending - 30 minutes remaining (moderate)
@@ -100,11 +111,22 @@ class FreshPaymentPendingSeeder extends Seeder
             'platform_fee' => 90,
             'total_amount' => 990,
             'status' => 'payment_pending',
-            'payment_status' => 'unpaid',
             'scheduled_at' => now()->addDays(3)->setTime(10, 0),
             'accepted_at' => now()->subMinutes(30),
             'payment_deadline' => now()->addMinutes(30), // 30 minutes left
             'client_notes' => 'I need help reviewing an employment contract before signing. Want to make sure terms are fair.',
+        ]);
+
+        \App\Models\Transaction::create([
+            'consultation_id' => $consultation2->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 990,
+            'lawyer_payout' => 900,
+            'platform_fee' => 90,
+            'status' => 'pending',
+            'payment_method' => null,
         ]);
 
         // 3. Payment pending - 15 minutes remaining (very urgent)
@@ -118,11 +140,22 @@ class FreshPaymentPendingSeeder extends Seeder
             'platform_fee' => 160,
             'total_amount' => 1760,
             'status' => 'payment_pending',
-            'payment_status' => 'unpaid',
             'scheduled_at' => now()->addDays(1)->setTime(15, 0),
             'accepted_at' => now()->subMinutes(45),
             'payment_deadline' => now()->addMinutes(15), // 15 minutes left!
             'client_notes' => 'Urgent consultation needed regarding child custody arrangement. Ex-spouse is threatening to take kids.',
+        ]);
+
+        \App\Models\Transaction::create([
+            'consultation_id' => $consultation3->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 1760,
+            'lawyer_payout' => 1600,
+            'platform_fee' => 160,
+            'status' => 'pending',
+            'payment_method' => null,
         ]);
 
         // 4. Payment pending - 45 minutes remaining
@@ -136,11 +169,22 @@ class FreshPaymentPendingSeeder extends Seeder
             'platform_fee' => 100,
             'total_amount' => 1100,
             'status' => 'payment_pending',
-            'payment_status' => 'unpaid',
             'scheduled_at' => null,
             'accepted_at' => now()->subMinutes(15),
             'payment_deadline' => now()->addMinutes(45), // 45 minutes left
             'client_notes' => 'Need review of property sale documents. Want to ensure no hidden clauses or issues.',
+        ]);
+
+        \App\Models\Transaction::create([
+            'consultation_id' => $consultation4->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 1100,
+            'lawyer_payout' => 1000,
+            'platform_fee' => 100,
+            'status' => 'pending',
+            'payment_method' => null,
         ]);
 
         // 5. Payment pending - 5 minutes remaining (CRITICAL!)
@@ -154,11 +198,22 @@ class FreshPaymentPendingSeeder extends Seeder
             'platform_fee' => 50,
             'total_amount' => 550,
             'status' => 'payment_pending',
-            'payment_status' => 'unpaid',
             'scheduled_at' => now()->addDays(4)->setTime(16, 0),
             'accepted_at' => now()->subMinutes(55),
             'payment_deadline' => now()->addMinutes(5), // Only 5 minutes left!!!
             'client_notes' => 'Business partner wants to dissolve partnership. Need advice on protecting my interests.',
+        ]);
+
+        \App\Models\Transaction::create([
+            'consultation_id' => $consultation5->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 550,
+            'lawyer_payout' => 500,
+            'platform_fee' => 50,
+            'status' => 'pending',
+            'payment_method' => null,
         ]);
 
         $this->command->info('✅ Created 5 payment pending consultations:');

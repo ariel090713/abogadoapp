@@ -21,6 +21,9 @@
     <!-- Chat Component -->
     <div class="md:max-w-5xl md:mx-auto">
         
+        <!-- Pending Reschedule Banner -->
+        <x-pending-reschedule-banner :consultation="$consultation" />
+        
         @if($chatStatus === 'waiting')
             <!-- Waiting State -->
             <div class="bg-white rounded-2xl shadow-lg p-8">
@@ -105,6 +108,14 @@
                             </div>
                         </div>
                     @endif
+                    
+                    <!-- Reschedule Info -->
+                    <x-reschedule-info :consultation="$consultation" />
+                    
+                    <!-- Reschedule Button -->
+                    <div class="flex justify-center pt-4">
+                        <x-reschedule-button :consultation="$consultation" />
+                    </div>
                 </div>
             </div>
 
@@ -702,3 +713,7 @@
     }
 </script>
 @endscript
+
+
+<!-- Reschedule Modals -->
+<x-reschedule-modal :consultation="$consultation" />

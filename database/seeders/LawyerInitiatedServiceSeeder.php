@@ -26,6 +26,7 @@ class LawyerInitiatedServiceSeeder extends Seeder
             ->first();
 
         if (!$parentCase) {
+            $paymentIntentId = 'pi_test_' . \Illuminate\Support\Str::random(20);
             $parentCase = Consultation::create([
                 'client_id' => $client->id,
                 'lawyer_id' => $lawyer->id,
@@ -35,7 +36,6 @@ class LawyerInitiatedServiceSeeder extends Seeder
                 'rate' => 1500,
                 'total_amount' => 1500,
                 'status' => 'completed',
-                'payment_status' => 'paid',
                 'scheduled_at' => Carbon::now()->subDays(5),
                 'accepted_at' => Carbon::now()->subDays(5),
                 'started_at' => Carbon::now()->subDays(5),
@@ -43,6 +43,20 @@ class LawyerInitiatedServiceSeeder extends Seeder
                 'completed_at' => Carbon::now()->subDays(5)->addMinutes(30),
                 'client_notes' => 'Need help reviewing employment contract',
                 'initiated_by' => 'client',
+            ]);
+
+            \App\Models\Transaction::create([
+                'consultation_id' => $parentCase->id,
+                'user_id' => $client->id,
+                'lawyer_id' => $lawyer->id,
+                'type' => 'consultation_payment',
+                'amount' => 1500,
+                'lawyer_payout' => 1500,
+                'platform_fee' => 0,
+                'status' => 'completed',
+                'payment_method' => 'gcash',
+                'paymongo_payment_intent_id' => $paymentIntentId,
+                'processed_at' => Carbon::now()->subDays(5),
             ]);
             
             $this->command->info('Created parent case: ' . $parentCase->getCaseNumber());
@@ -62,10 +76,24 @@ class LawyerInitiatedServiceSeeder extends Seeder
             'quote_notes' => 'I would like to offer a free 15-minute follow-up to discuss any remaining questions you may have about your employment contract.',
             'total_amount' => 0,
             'status' => 'pending_client_acceptance',
-            'payment_status' => 'free',
             'scheduled_at' => Carbon::now()->addDays(2)->setTime(14, 0),
             'quote_provided_at' => Carbon::now()->subHours(2),
         ]);
+
+        // Create free transaction
+        \App\Models\Transaction::create([
+            'consultation_id' => $offer1->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 0,
+            'lawyer_payout' => 0,
+            'platform_fee' => 0,
+            'status' => 'completed',
+            'payment_method' => 'free',
+            'processed_at' => Carbon::now()->subHours(2),
+        ]);
+
         $this->command->info('Created free chat offer (pending): ' . $offer1->id);
 
         // Scenario 2: Paid video consultation offer (pending)
@@ -82,10 +110,23 @@ class LawyerInitiatedServiceSeeder extends Seeder
             'quote_notes' => 'Based on our previous discussion, I recommend a comprehensive video consultation to develop a negotiation strategy for your contract terms. This will include detailed analysis and actionable recommendations.',
             'total_amount' => 3000,
             'status' => 'pending_client_acceptance',
-            'payment_status' => 'unpaid',
             'scheduled_at' => Carbon::now()->addDays(3)->setTime(10, 0),
             'quote_provided_at' => Carbon::now()->subHours(1),
         ]);
+
+        // Create pending transaction
+        \App\Models\Transaction::create([
+            'consultation_id' => $offer2->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 3000,
+            'lawyer_payout' => 3000,
+            'platform_fee' => 0,
+            'status' => 'pending',
+            'payment_method' => null,
+        ]);
+
         $this->command->info('Created paid video offer (pending): ' . $offer2->id);
 
         // Scenario 3: Document review offer (pending)
@@ -101,9 +142,22 @@ class LawyerInitiatedServiceSeeder extends Seeder
             'quote_notes' => 'I can review the revised version of your employment contract and provide detailed feedback on the changes. This will include markup and recommendations.',
             'total_amount' => 2500,
             'status' => 'pending_client_acceptance',
-            'payment_status' => 'unpaid',
             'quote_provided_at' => Carbon::now()->subMinutes(30),
         ]);
+
+        // Create pending transaction
+        \App\Models\Transaction::create([
+            'consultation_id' => $offer3->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 2500,
+            'lawyer_payout' => 2500,
+            'platform_fee' => 0,
+            'status' => 'pending',
+            'payment_method' => null,
+        ]);
+
         $this->command->info('Created document review offer (pending): ' . $offer3->id);
 
         // Scenario 4: Accepted free service (now active)
@@ -120,12 +174,26 @@ class LawyerInitiatedServiceSeeder extends Seeder
             'quote_notes' => 'Free quick chat to clarify the termination clause.',
             'total_amount' => 0,
             'status' => 'scheduled',
-            'payment_status' => 'free',
             'scheduled_at' => Carbon::now()->addDays(1)->setTime(15, 0),
             'quote_provided_at' => Carbon::now()->subDays(1),
             'quote_accepted_at' => Carbon::now()->subHours(3),
             'accepted_at' => Carbon::now()->subHours(3),
         ]);
+
+        // Create free transaction
+        \App\Models\Transaction::create([
+            'consultation_id' => $offer4->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 0,
+            'lawyer_payout' => 0,
+            'platform_fee' => 0,
+            'status' => 'completed',
+            'payment_method' => 'free',
+            'processed_at' => Carbon::now()->subHours(3),
+        ]);
+
         $this->command->info('Created accepted free service (scheduled): ' . $offer4->id);
 
         // Scenario 5: Declined offer
@@ -142,10 +210,23 @@ class LawyerInitiatedServiceSeeder extends Seeder
             'quote_notes' => 'Extended session for comprehensive review.',
             'total_amount' => 4000,
             'status' => 'declined',
-            'payment_status' => 'unpaid',
             'scheduled_at' => Carbon::now()->addDays(4)->setTime(11, 0),
             'quote_provided_at' => Carbon::now()->subDays(2),
         ]);
+
+        // Create pending transaction (declined before payment)
+        \App\Models\Transaction::create([
+            'consultation_id' => $offer5->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 4000,
+            'lawyer_payout' => 4000,
+            'platform_fee' => 0,
+            'status' => 'pending',
+            'payment_method' => null,
+        ]);
+
         $this->command->info('Created declined offer: ' . $offer5->id);
 
         $this->command->info('✅ Lawyer-initiated service test data created successfully!');

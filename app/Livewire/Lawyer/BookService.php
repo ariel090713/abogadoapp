@@ -188,7 +188,6 @@ class BookService extends Component
                 'quote_notes' => $this->notes,
                 'total_amount' => $price,
                 'status' => 'pending_client_acceptance',
-                'payment_status' => $price == 0 ? 'free' : 'unpaid',
                 'scheduled_at' => $this->serviceType !== 'document_review' 
                     ? $this->scheduledDate . ' ' . $this->scheduledTime 
                     : null,

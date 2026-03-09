@@ -39,7 +39,7 @@ class Consultations extends Component
         if ($this->filter === 'pending') {
             $query->pending();
         } elseif ($this->filter === 'payment_pending') {
-            $query->where('status', 'payment_pending');
+            $query->whereIn('status', ['payment_pending', 'payment_processing']);
         } elseif ($this->filter === 'awaiting_quote') {
             $query->where('status', 'awaiting_quote_approval');
         } elseif ($this->filter === 'scheduled') {
@@ -73,7 +73,7 @@ class Consultations extends Component
         $counts = [
             'all' => Consultation::forClient(auth()->id())->count(),
             'pending' => Consultation::forClient(auth()->id())->pending()->count(),
-            'payment_pending' => Consultation::forClient(auth()->id())->where('status', 'payment_pending')->count(),
+            'payment_pending' => Consultation::forClient(auth()->id())->whereIn('status', ['payment_pending', 'payment_processing'])->count(),
             'scheduled' => Consultation::forClient(auth()->id())->where('status', 'scheduled')->count(),
             'in_progress' => Consultation::forClient(auth()->id())->where('status', 'in_progress')->count(),
             'completed' => Consultation::forClient(auth()->id())->completed()->count(),
@@ -147,7 +147,7 @@ class Consultations extends Component
             return;
         }
 
-        if (!in_array($consultation->status, ['pending', 'payment_pending', 'scheduled', 'awaiting_quote_approval'])) {
+        if (!in_array($consultation->status, ['pending', 'payment_pending', 'payment_processing', 'scheduled', 'awaiting_quote_approval'])) {
             session()->flash('error', 'Cannot cancel this consultation.');
             $this->closeModal();
             return;

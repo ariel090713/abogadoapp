@@ -45,6 +45,7 @@ class PayoutTestSeeder extends Seeder
             for ($i = 0; $i < $numTransactions; $i++) {
                 $client = $clients->random();
                 $amount = rand(1000, 5000); // ₱1,000 to ₱5,000
+                $paymentIntentId = 'pi_test_' . uniqid();
                 
                 // Create consultation
                 $consultation = Consultation::create([
@@ -52,7 +53,6 @@ class PayoutTestSeeder extends Seeder
                     'lawyer_id' => $lawyer->id,
                     'consultation_type' => ['video', 'chat', 'document_review'][rand(0, 2)],
                     'status' => 'completed',
-                    'payment_status' => 'paid',
                     'total_amount' => $amount,
                     'platform_fee' => 0,
                     'rate' => $amount, // Hourly/service rate
@@ -72,7 +72,7 @@ class PayoutTestSeeder extends Seeder
                     'lawyer_payout' => $amount,
                     'status' => 'completed',
                     'payment_method' => ['card', 'gcash', 'paymaya'][rand(0, 2)],
-                    'paymongo_payment_intent_id' => 'pi_test_' . uniqid(),
+                    'paymongo_payment_intent_id' => $paymentIntentId,
                     'paymongo_payment_id' => 'pay_test_' . uniqid(),
                     'reference_number' => 'TXN-' . strtoupper(uniqid()),
                     'processed_at' => now()->subDays(rand(8, 30)),

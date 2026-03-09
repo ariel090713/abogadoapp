@@ -49,6 +49,7 @@ class ActiveVideoConsultationSeeder extends Seeder
         }
 
         // Create active video consultation (started 5 minutes ago, 60 minutes duration)
+        $paymentIntentId = 'test_payment_intent_' . uniqid();
         $consultation = Consultation::create([
             'client_id' => $client->id,
             'lawyer_id' => $lawyer->id,
@@ -61,10 +62,21 @@ class ActiveVideoConsultationSeeder extends Seeder
             'started_at' => now()->subMinutes(5),
             'quoted_fee' => 1000,
             'final_fee' => 1000,
-            'payment_status' => 'paid',
+        ]);
+
+        // Create completed transaction
+        \App\Models\Transaction::create([
+            'consultation_id' => $consultation->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 1000,
+            'lawyer_payout' => 1000,
+            'platform_fee' => 0,
+            'status' => 'completed',
             'payment_method' => 'paymongo',
-            'payment_intent_id' => 'test_payment_intent',
-            'paid_at' => now()->subHours(1),
+            'paymongo_payment_intent_id' => $paymentIntentId,
+            'processed_at' => now()->subHours(1),
         ]);
 
         $this->command->info('✅ Active video consultation created!');

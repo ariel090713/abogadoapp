@@ -1,6 +1,13 @@
 <div>
 <div class="w-full h-screen flex flex-col" style="height: 100vh; overflow: hidden;">
     
+    <!-- Pending Reschedule Banner (Fixed at top) -->
+    @if($consultation->isReschedulePending())
+        <div class="flex-shrink-0">
+            <x-pending-reschedule-banner :consultation="$consultation" />
+        </div>
+    @endif
+    
     <!-- Header -->
     <div class="flex-shrink-0 bg-blue-900 border-b border-blue-950 px-4 py-3">
         <div class="flex items-center justify-between">
@@ -135,6 +142,16 @@
                                     </div>
                                 </div>
                                 @endif
+                            </div>
+                            
+                            <!-- Reschedule Info -->
+                            <div class="mt-6">
+                                <x-reschedule-info :consultation="$consultation" />
+                            </div>
+                            
+                            <!-- Reschedule Button -->
+                            <div class="flex justify-center pt-4">
+                                <x-reschedule-button :consultation="$consultation" />
                             </div>
                             </div>
                         </div>
@@ -642,3 +659,7 @@
 </div>
 
 </div>
+
+
+<!-- Reschedule Modals -->
+<x-reschedule-modal :consultation="$consultation" />

@@ -32,7 +32,7 @@ class Cases extends Component
         // Apply status filter
         if ($this->statusFilter !== 'all') {
             if ($this->statusFilter === 'active') {
-                $query->whereIn('status', ['pending', 'payment_pending', 'scheduled', 'in_progress', 'awaiting_quote_approval']);
+                $query->whereIn('status', ['pending', 'payment_pending', 'payment_processing', 'scheduled', 'in_progress', 'awaiting_quote_approval']);
             } elseif ($this->statusFilter === 'completed') {
                 $query->where('status', 'completed');
             } elseif ($this->statusFilter === 'cancelled') {

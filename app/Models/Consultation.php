@@ -32,8 +32,8 @@ class Consultation extends Model
         'quote_provided_at',
         'quote_accepted_at',
         'status',
-        'payment_status',
-        'payment_intent_id',
+        // payment_status - REMOVED: Now accessed via transaction relationship
+        // payment_intent_id - REMOVED: Now accessed via transaction relationship
         'scheduled_at',
         'accepted_at',
         'payment_deadline',
@@ -101,6 +101,154 @@ class Consultation extends Model
         'is_follow_up' => 'boolean',
         'suggested_times' => 'array',
     ];
+
+    // ==========================================
+    // PAYMENT ACCESSORS & HELPERS
+    // ==========================================
+    // These methods provide access to payment data via transaction relationship
+    // since payment_status and payment_intent_id columns have been removed.
+    
+    /**
+     * Get payment status from transaction (accessor)
+     * Maps transaction.status to payment_status for backward compatibility
+     * 
+     * @return string
+     */
+    public function getPaymentStatusAttribute()
+    {
+        // Always load transaction if not loaded
+        if (!$this->relationLoaded('transaction')) {
+            $this->load('transaction');
+        }
+        
+        // If we have a transaction, use its status as source of truth
+        if ($this->transaction) {
+            return match($this->transaction->status) {
+                'pending' => 'pending',
+                'processing' => 'processing',
+                'completed' => 'paid',
+                'failed' => 'failed',
+                'refunded' => 'refunded',
+                default => 'unpaid',
+            };
+        }
+        
+        // No transaction = unpaid (or free if total_amount is 0)
+        return $this->total_amount == 0 ? 'free' : 'unpaid';
+    }
+    
+    /**
+     * Get payment intent ID from transaction (accessor)
+     * 
+     * @return string|null
+     */
+    public function getPaymentIntentIdAttribute()
+    {
+        // Always load transaction if not loaded
+        if (!$this->relationLoaded('transaction')) {
+            $this->load('transaction');
+        }
+        
+        return $this->transaction?->paymongo_payment_intent_id;
+    }
+    
+    /**
+     * Check if consultation is paid
+     * 
+     * @return bool
+     */
+    public function isPaid(): bool
+    {
+        return $this->transaction && $this->transaction->status === 'completed';
+    }
+    
+    /**
+     * Check if payment is pending (initiated but not completed)
+     * 
+     * @return bool
+     */
+    public function isPaymentPending(): bool
+    {
+        if (!$this->transaction) {
+            return false;
+        }
+        
+        return in_array($this->transaction->status, ['pending', 'processing']);
+    }
+    
+    /**
+     * Check if payment is processing (user returned from PayMongo)
+     * 
+     * @return bool
+     */
+    public function isPaymentProcessing(): bool
+    {
+        return $this->transaction && $this->transaction->status === 'processing';
+    }
+    
+    /**
+     * Check if payment failed
+     * 
+     * @return bool
+     */
+    public function isPaymentFailed(): bool
+    {
+        return $this->transaction && $this->transaction->status === 'failed';
+    }
+    
+    /**
+     * Check if payment was refunded
+     * 
+     * @return bool
+     */
+    public function isPaymentRefunded(): bool
+    {
+        return $this->transaction && $this->transaction->status === 'refunded';
+    }
+    
+    /**
+     * Check if consultation is unpaid (no transaction or pending)
+     * 
+     * @return bool
+     */
+    public function isUnpaid(): bool
+    {
+        if (!$this->transaction) {
+            return true;
+        }
+        
+        return $this->transaction->status === 'pending';
+    }
+    
+    /**
+     * Check if consultation is free (no payment required)
+     * 
+     * @return bool
+     */
+    public function isFree(): bool
+    {
+        return $this->total_amount == 0;
+    }
+    
+    /**
+     * Get payment method from transaction
+     * 
+     * @return string|null
+     */
+    public function getPaymentMethod(): ?string
+    {
+        return $this->transaction?->payment_method;
+    }
+    
+    /**
+     * Get payment processed date from transaction
+     * 
+     * @return \Carbon\Carbon|null
+     */
+    public function getPaymentProcessedAt()
+    {
+        return $this->transaction?->processed_at;
+    }
 
     public function client(): BelongsTo
     {
@@ -176,6 +324,82 @@ class Consultation extends Model
     {
         return $query->where('lawyer_id', $lawyerId)
             ->whereHas('client'); // Exclude consultations with soft-deleted clients
+    }
+    
+    // ==========================================
+    // PAYMENT STATUS SCOPES
+    // ==========================================
+    // These scopes filter consultations by payment status using transaction relationship
+    
+    /**
+     * Scope: Consultations with completed payment
+     */
+    public function scopePaid($query)
+    {
+        return $query->whereHas('transaction', function($q) {
+            $q->where('status', 'completed');
+        });
+    }
+    
+    /**
+     * Scope: Consultations with pending or processing payment
+     */
+    public function scopePaymentPending($query)
+    {
+        return $query->whereHas('transaction', function($q) {
+            $q->whereIn('status', ['pending', 'processing']);
+        });
+    }
+    
+    /**
+     * Scope: Consultations with processing payment (user returned from PayMongo)
+     */
+    public function scopePaymentProcessing($query)
+    {
+        return $query->whereHas('transaction', function($q) {
+            $q->where('status', 'processing');
+        });
+    }
+    
+    /**
+     * Scope: Consultations with failed payment
+     */
+    public function scopePaymentFailed($query)
+    {
+        return $query->whereHas('transaction', function($q) {
+            $q->where('status', 'failed');
+        });
+    }
+    
+    /**
+     * Scope: Consultations with refunded payment
+     */
+    public function scopePaymentRefunded($query)
+    {
+        return $query->whereHas('transaction', function($q) {
+            $q->where('status', 'refunded');
+        });
+    }
+    
+    /**
+     * Scope: Consultations without payment or with pending payment
+     */
+    public function scopeUnpaid($query)
+    {
+        return $query->where(function($q) {
+            $q->whereDoesntHave('transaction')
+              ->orWhereHas('transaction', function($subQ) {
+                  $subQ->where('status', 'pending');
+              });
+        });
+    }
+    
+    /**
+     * Scope: Free consultations (no payment required)
+     */
+    public function scopeFree($query)
+    {
+        return $query->where('total_amount', 0);
     }
 
     /**
@@ -262,6 +486,7 @@ class Consultation extends Model
             return 'ended';
         }
 
+        // Return the actual status (payment_processing is now a real status)
         return $this->status;
     }
 

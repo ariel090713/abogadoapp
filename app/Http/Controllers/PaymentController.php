@@ -8,6 +8,25 @@ use App\Services\TwilioVideoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * PaymentController
+ * 
+ * Handles PayMongo payment processing and webhook events.
+ * 
+ * CRITICAL: Payment Data Synchronization
+ * ======================================
+ * Payment data exists in BOTH consultations and transactions tables for performance.
+ * All webhook handlers MUST update both tables atomically using DB::transaction()
+ * to ensure data consistency.
+ * 
+ * Pattern:
+ * DB::transaction(function() {
+ *     $transaction->update([...]);  // Update transaction table
+ *     $consultation->update([...]);  // Update consultation table
+ * });
+ * 
+ * This prevents race conditions and ensures both tables always stay in sync.
+ */
 class PaymentController extends Controller
 {
     public function __construct(
@@ -33,7 +52,7 @@ class PaymentController extends Controller
         }
 
         // Check if already paid
-        if ($consultation->payment_status === 'paid') {
+        if ($consultation->isPaid()) {
             return redirect()
                 ->route('client.consultation.details', $consultation)
                 ->with('info', 'This consultation has already been paid.');
@@ -66,6 +85,7 @@ class PaymentController extends Controller
 
     /**
      * Handle successful payment callback
+     * NOTE: This is just a redirect endpoint. Actual payment processing happens via webhook.
      */
     public function success(Request $request, Consultation $consultation)
     {
@@ -75,59 +95,49 @@ class PaymentController extends Controller
             'request_params' => $request->all(),
         ]);
 
-        try {
-            // Verify payment with PayMongo
-            $verified = $this->paymentService->verifyPayment($consultation);
+        // Refresh consultation to get latest status
+        $consultation->load('transaction')->refresh();
 
-            Log::info('Payment verification result', [
+        // Check if payment was already processed by webhook
+        if ($consultation->isPaid() && $consultation->status === 'scheduled') {
+            Log::info('Payment already processed by webhook', [
                 'consultation_id' => $consultation->id,
-                'verified' => $verified,
             ]);
-
-            if ($verified) {
-                // Create Twilio video room if consultation type is video
-                if ($consultation->consultation_type === 'video') {
-                    $roomSid = $this->twilioService->createRoom($consultation);
-                    
-                    if ($roomSid) {
-                        $consultation->update(['video_room_sid' => $roomSid]);
-                        
-                        Log::info('Video room created for consultation', [
-                            'consultation_id' => $consultation->id,
-                            'room_sid' => $roomSid,
-                        ]);
-                    } else {
-                        Log::error('Failed to create video room', [
-                            'consultation_id' => $consultation->id,
-                        ]);
-                    }
-                }
-                
-                return redirect()
-                    ->route('client.consultation.details', $consultation)
-                    ->with('success', 'Payment successful! Your consultation is now scheduled.');
-            }
-
-            Log::warning('Payment verification returned false', [
-                'consultation_id' => $consultation->id,
-                'payment_intent_id' => $consultation->payment_intent_id,
-            ]);
-
+            
             return redirect()
-                ->route('client.consultations')
-                ->with('error', 'Payment verification failed. Please contact support.');
-
-        } catch (\Exception $e) {
-            Log::error('Payment success callback error', [
-                'consultation_id' => $consultation->id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return redirect()
-                ->route('client.consultations')
-                ->with('error', 'An error occurred. Please contact support.');
+                ->route('client.consultation.details', $consultation)
+                ->with('success', 'Payment successful! Your consultation is now scheduled.');
         }
+
+        // Set transaction status to processing (webhook will update to completed)
+        if ($consultation->transaction && $consultation->transaction->status === 'pending') {
+            $consultation->transaction->update(['status' => 'processing']);
+            
+            Log::info('Transaction status updated to processing', [
+                'consultation_id' => $consultation->id,
+                'transaction_id' => $consultation->transaction->id,
+            ]);
+        }
+
+        // Set consultation status to payment_processing
+        if ($consultation->status === 'payment_pending') {
+            $consultation->update(['status' => 'payment_processing']);
+            
+            Log::info('Consultation status updated to payment_processing', [
+                'consultation_id' => $consultation->id,
+            ]);
+        }
+
+        // Payment not yet processed - webhook will handle it
+        Log::info('Payment pending webhook processing', [
+            'consultation_id' => $consultation->id,
+            'current_status' => $consultation->status,
+            'payment_status' => $consultation->isPaid() ? 'paid' : 'pending',
+        ]);
+
+        return redirect()
+            ->route('client.consultation.details', $consultation)
+            ->with('info', 'Payment is being processed. You will be notified once confirmed.');
     }
 
     /**
@@ -246,7 +256,7 @@ class PaymentController extends Controller
         $checkoutSessionId = $data['id'];
         
         // Check if already processed
-        if ($consultation->status === 'scheduled' && $consultation->payment_status === 'paid') {
+        if ($consultation->isPaid() && $consultation->status === 'scheduled') {
             Log::info('Payment already processed', [
                 'consultation_id' => $consultation->id
             ]);
@@ -292,12 +302,29 @@ class PaymentController extends Controller
                     ]);
                 }
                 
-                // Update transaction with all PayMongo IDs
+                // Find transaction
                 $transaction = \App\Models\Transaction::where('consultation_id', $consultation->id)
                     ->where('paymongo_payment_intent_id', $checkoutSessionId)
                     ->first();
                 
-                if ($transaction) {
+                if (!$transaction) {
+                    Log::warning('Transaction not found for consultation', [
+                        'consultation_id' => $consultation->id,
+                        'checkout_session_id' => $checkoutSessionId,
+                    ]);
+                    return;
+                }
+                
+                // CRITICAL: Update ONLY transaction table in a database transaction
+                // Consultation status is updated separately (not payment_status)
+                \Illuminate\Support\Facades\DB::transaction(function () use (
+                    $transaction, 
+                    $consultation, 
+                    $paymentId, 
+                    $paymentMethodId, 
+                    $paymentMethod
+                ) {
+                    // Update transaction with all PayMongo IDs
                     $transaction->update([
                         'paymongo_payment_id' => $paymentId,
                         'paymongo_payment_method_id' => $paymentMethodId,
@@ -312,21 +339,60 @@ class PaymentController extends Controller
                         'payment_method_id' => $paymentMethodId,
                         'payment_method' => $paymentMethod,
                     ]);
-                } else {
-                    Log::warning('Transaction not found for consultation', [
+                    
+                    // Update consultation status (NOT payment_status - that comes from transaction)
+                    // Document reviews go to in_progress immediately, others go to scheduled
+                    $status = $consultation->consultation_type === 'document_review' ? 'in_progress' : 'scheduled';
+                    
+                    $consultationUpdateData = [
+                        'status' => $status,
+                    ];
+
+                    // For document reviews, set started_at and calculate review completion deadline
+                    if ($consultation->consultation_type === 'document_review') {
+                        $consultationUpdateData['started_at'] = now();
+                        
+                        $deadlineService = app(\App\Services\DeadlineCalculationService::class);
+                        $reviewDeadline = $deadlineService->calculateReviewCompletionDeadline($consultation);
+                        $consultationUpdateData['review_completion_deadline'] = $reviewDeadline;
+
+                        Log::info('Document review started with deadline', [
+                            'consultation_id' => $consultation->id,
+                            'turnaround_days' => $consultation->estimated_turnaround_days,
+                            'started_at' => now()->toDateTimeString(),
+                            'deadline' => $reviewDeadline->toDateTimeString(),
+                        ]);
+                    }
+
+                    $consultation->update($consultationUpdateData);
+                    
+                    Log::info('Consultation updated with status', [
                         'consultation_id' => $consultation->id,
-                        'checkout_session_id' => $checkoutSessionId,
+                        'status' => $status,
                     ]);
-                }
+                });
                 
-                // Process successful payment
-                $this->paymentService->processSuccessfulPayment(
-                    $consultation,
-                    $checkoutSessionId,
-                    $paymentMethod,
-                    $paymentId,
-                    $paymentMethodId
-                );
+                // Send notifications to both client and lawyer (outside transaction)
+                $consultation->client->notify(new \App\Notifications\PaymentSuccessful($consultation));
+                $consultation->lawyer->notify(new \App\Notifications\PaymentReceived($consultation));
+                
+                // Create Twilio video room if consultation type is video
+                if ($consultation->consultation_type === 'video') {
+                    $roomSid = $this->twilioService->createRoom($consultation);
+                    
+                    if ($roomSid) {
+                        $consultation->update(['video_room_sid' => $roomSid]);
+                        
+                        Log::info('Video room created for consultation via webhook', [
+                            'consultation_id' => $consultation->id,
+                            'room_sid' => $roomSid,
+                        ]);
+                    } else {
+                        Log::error('Failed to create video room via webhook', [
+                            'consultation_id' => $consultation->id,
+                        ]);
+                    }
+                }
                 
                 Log::info('Consultation payment processed via webhook', [
                     'consultation_id' => $consultation->id,
@@ -391,43 +457,54 @@ class PaymentController extends Controller
                     $paymentMethodId = $payment['attributes']['source']['id'] ?? null;
                     $amount = $payment['attributes']['amount'] / 100; // Convert from centavos
                     
-                    // Create transaction record
-                    $transaction = \App\Models\Transaction::create([
-                        'user_id' => $documentRequest->client_id,
-                        'lawyer_id' => $documentRequest->lawyer_id,
-                        'document_request_id' => $documentRequest->id,
-                        'type' => 'document_drafting',
-                        'amount' => $amount,
-                        'platform_fee' => 0,
-                        'lawyer_payout' => $amount,
-                        'payment_method' => $paymentMethod,
-                        'paymongo_payment_intent_id' => $checkoutSessionId,
-                        'paymongo_payment_id' => $paymentId,
-                        'paymongo_payment_method_id' => $paymentMethodId,
-                        'status' => 'completed',
-                        'processed_at' => now(),
-                    ]);
+                    // CRITICAL: Update both transaction AND document request in a database transaction
+                    // This ensures both tables stay in sync atomically
+                    \Illuminate\Support\Facades\DB::transaction(function () use (
+                        $documentRequest,
+                        $checkoutSessionId,
+                        $paymentId,
+                        $paymentMethod,
+                        $paymentMethodId,
+                        $amount
+                    ) {
+                        // Create transaction record
+                        $transaction = \App\Models\Transaction::create([
+                            'user_id' => $documentRequest->client_id,
+                            'lawyer_id' => $documentRequest->lawyer_id,
+                            'document_request_id' => $documentRequest->id,
+                            'type' => 'document_drafting',
+                            'amount' => $amount,
+                            'platform_fee' => 0,
+                            'lawyer_payout' => $amount,
+                            'payment_method' => $paymentMethod,
+                            'paymongo_payment_intent_id' => $checkoutSessionId,
+                            'paymongo_payment_id' => $paymentId,
+                            'paymongo_payment_method_id' => $paymentMethodId,
+                            'status' => 'completed',
+                            'processed_at' => now(),
+                        ]);
 
-                    // Update document request
-                    $documentRequest->update([
-                        'status' => 'in_progress',
-                        'payment_status' => 'paid',
-                        'paid_at' => now(),
-                    ]);
+                        // Update document request
+                        $documentRequest->update([
+                            'status' => 'in_progress',
+                            'payment_status' => 'paid',
+                            'paid_at' => now(),
+                        ]);
+                        
+                        Log::info('Document payment processed via webhook', [
+                            'request_id' => $documentRequest->id,
+                            'transaction_id' => $transaction->id,
+                            'checkout_session_id' => $checkoutSessionId,
+                            'payment_id' => $paymentId,
+                            'payment_method_id' => $paymentMethodId,
+                            'payment_method' => $paymentMethod,
+                            'amount' => $amount,
+                        ]);
+                    });
 
-                    // Send notifications
+                    // Send notifications (outside transaction)
                     $documentRequest->client->notify(new \App\Notifications\DocumentCompleted($documentRequest));
                     $documentRequest->lawyer->notify(new \App\Notifications\DocumentRequestReceived($documentRequest));
-
-                    Log::info('Document payment processed via webhook', [
-                        'request_id' => $documentRequest->id,
-                        'transaction_id' => $transaction->id,
-                        'checkout_session_id' => $checkoutSessionId,
-                        'payment_id' => $paymentId,
-                        'payment_method_id' => $paymentMethodId,
-                        'payment_method' => $paymentMethod,
-                        'amount' => $amount,
-                    ]);
                 } else {
                     Log::warning('No payment found in document checkout session', [
                         'request_id' => $documentRequest->id,
@@ -479,37 +556,58 @@ class PaymentController extends Controller
             return;
         }
 
-        // Update transaction status
-        $transaction->update([
-            'status' => 'completed',
-            'paid_at' => now(),
-        ]);
-
-        // Update consultation status
+        // Get consultation
         $consultation = $transaction->consultation;
-        // Document reviews go to in_progress, others go to scheduled
-        $status = $consultation->consultation_type === 'document_review' ? 'in_progress' : 'scheduled';
-        $consultation->update([
-            'status' => $status,
-            'started_at' => $consultation->consultation_type === 'document_review' ? now() : null,
-        ]);
         
-        // Calculate review completion deadline for document reviews
+        if (!$consultation) {
+            Log::warning('Consultation not found for transaction', [
+                'transaction_id' => $transaction->id
+            ]);
+            return;
+        }
+
+        // CRITICAL: Update ONLY transaction table in a database transaction
+        // Consultation status is updated separately (not payment_status)
+        \Illuminate\Support\Facades\DB::transaction(function () use ($transaction, $consultation) {
+            // Update transaction status
+            $transaction->update([
+                'status' => 'completed',
+                'paid_at' => now(),
+            ]);
+
+            // Update consultation status (NOT payment_status - that comes from transaction)
+            // Document reviews go to in_progress, others go to scheduled
+            $status = $consultation->consultation_type === 'document_review' ? 'in_progress' : 'scheduled';
+            
+            $consultationUpdateData = [
+                'status' => $status,
+            ];
+            
+            // For document reviews, set started_at
+            if ($consultation->consultation_type === 'document_review') {
+                $consultationUpdateData['started_at'] = now();
+            }
+            
+            $consultation->update($consultationUpdateData);
+            
+            Log::info('Payment completed via webhook', [
+                'transaction_id' => $transaction->id,
+                'consultation_id' => $consultation->id,
+                'amount' => $transaction->amount,
+                'consultation_status' => $status,
+            ]);
+        });
+        
+        // Calculate review completion deadline for document reviews (outside transaction)
         if ($consultation->consultation_type === 'document_review' && $consultation->estimated_turnaround_days) {
             $deadlineService = app(\App\Services\DeadlineCalculationService::class);
             $consultation->review_completion_deadline = $deadlineService->calculateReviewCompletionDeadline($consultation);
             $consultation->save();
         }
 
-        // Send notifications
+        // Send notifications (outside transaction)
         $consultation->client->notify(new \App\Notifications\PaymentSuccessful($consultation));
         $consultation->lawyer->notify(new \App\Notifications\PaymentReceived($consultation));
-
-        Log::info('Payment completed via webhook', [
-            'transaction_id' => $transaction->id,
-            'consultation_id' => $consultation->id,
-            'amount' => $transaction->amount,
-        ]);
     }
 
     /**
@@ -533,28 +631,33 @@ class PaymentController extends Controller
             return;
         }
 
-        // Update transaction status
-        $transaction->update([
-            'status' => 'failed',
-        ]);
-
-        // Update consultation - keep status as 'payment_pending' for auto-accepted bookings
-        // Only update payment_status to 'failed'
+        // Get consultation
         $consultation = $transaction->consultation;
-        $consultation->update([
-            'payment_status' => 'failed',
-            // Status remains 'payment_pending' - don't change it
-        ]);
+        
+        if (!$consultation) {
+            Log::warning('Consultation not found for transaction', [
+                'transaction_id' => $transaction->id
+            ]);
+            return;
+        }
 
-        // Send notification to client
+        // CRITICAL: Update ONLY transaction table
+        // Consultation status remains 'payment_pending' - don't change it
+        \Illuminate\Support\Facades\DB::transaction(function () use ($transaction, $consultation) {
+            // Update transaction status
+            $transaction->update([
+                'status' => 'failed',
+            ]);
+            
+            Log::info('Payment failed via webhook', [
+                'transaction_id' => $transaction->id,
+                'consultation_id' => $consultation->id,
+            ]);
+        });
+
+        // Send notification to client (outside transaction)
         $errorMessage = $data['attributes']['last_payment_error']['message'] ?? 'Payment could not be processed';
         $consultation->client->notify(new \App\Notifications\PaymentFailed($consultation, $errorMessage));
-
-        Log::info('Payment failed via webhook', [
-            'transaction_id' => $transaction->id,
-            'consultation_id' => $consultation->id,
-            'error' => $errorMessage,
-        ]);
     }
 
     /**
@@ -627,6 +730,7 @@ class PaymentController extends Controller
 
     /**
      * Handle successful document payment callback
+     * NOTE: This is just a redirect endpoint. Actual payment processing happens via webhook.
      */
     public function documentSuccess(Request $request, $requestId)
     {
@@ -637,30 +741,39 @@ class PaymentController extends Controller
             'payment_intent_id' => $documentRequest->payment_intent_id,
         ]);
 
-        try {
-            // Verify payment with PayMongo
-            $verified = $this->paymentService->verifyDocumentPayment($documentRequest);
+        // Refresh to get latest status
+        $documentRequest->refresh();
 
-            if ($verified) {
-                return redirect()
-                    ->route('client.document.details', $documentRequest)
-                    ->with('success', 'Payment successful! The lawyer will start working on your document.');
-            } else {
-                return redirect()
-                    ->route('client.document.details', $documentRequest)
-                    ->with('warning', 'Payment is being processed. You will be notified once confirmed.');
-            }
-
-        } catch (\Exception $e) {
-            Log::error('Document payment verification failed', [
+        // Check if payment was already processed by webhook
+        if ($documentRequest->payment_status === 'paid' && $documentRequest->status === 'in_progress') {
+            Log::info('Document payment already processed by webhook', [
                 'request_id' => $documentRequest->id,
-                'error' => $e->getMessage(),
             ]);
-
+            
             return redirect()
                 ->route('client.document.details', $documentRequest)
-                ->with('error', 'Payment verification failed. Please contact support if amount was deducted.');
+                ->with('success', 'Payment successful! The lawyer will start working on your document.');
         }
+
+        // Set payment status to processing (webhook will update to paid)
+        if ($documentRequest->payment_status === 'pending') {
+            $documentRequest->update(['payment_status' => 'processing']);
+            
+            Log::info('Document payment status updated to processing', [
+                'request_id' => $documentRequest->id,
+            ]);
+        }
+
+        // Payment not yet processed - webhook will handle it
+        Log::info('Document payment pending webhook processing', [
+            'request_id' => $documentRequest->id,
+            'current_status' => $documentRequest->status,
+            'payment_status' => $documentRequest->payment_status,
+        ]);
+
+        return redirect()
+            ->route('client.document.details', $documentRequest)
+            ->with('info', 'Payment is being processed. You will be notified once confirmed.');
     }
 
     /**

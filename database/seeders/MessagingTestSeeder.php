@@ -37,9 +37,23 @@ class MessagingTestSeeder extends Seeder
                 'rate' => 1500.00,
                 'total_amount' => 1500.00,
                 'status' => 'scheduled',
-                'payment_status' => 'paid',
                 'scheduled_at' => now()->addMinutes(2), // Starts in 2 minutes
                 'client_notes' => 'Test consultation for messaging system',
+            ]);
+
+            // Create transaction for paid consultation
+            \App\Models\Transaction::create([
+                'consultation_id' => $consultation->id,
+                'user_id' => $client->id,
+                'lawyer_id' => $lawyer->id,
+                'type' => 'consultation_payment',
+                'amount' => 1500.00,
+                'lawyer_payout' => 1500.00,
+                'platform_fee' => 0.00,
+                'status' => 'completed',
+                'payment_method' => 'gcash',
+                'paymongo_payment_intent_id' => 'pi_test_' . \Illuminate\Support\Str::random(20),
+                'processed_at' => now()->subMinutes(5),
             ]);
 
             $this->command->info("Created test consultation ID: {$consultation->id}");

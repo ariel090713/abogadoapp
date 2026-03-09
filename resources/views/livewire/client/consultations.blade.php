@@ -216,6 +216,7 @@
                             {{ $displayStatus === 'pending_client_acceptance' ? 'bg-purple-100 text-purple-700' : '' }}
                             {{ $displayStatus === 'awaiting_quote_approval' ? 'bg-purple-100 text-purple-700' : '' }}
                             {{ $displayStatus === 'payment_pending' ? 'bg-orange-100 text-orange-700' : '' }}
+                            {{ $displayStatus === 'payment_processing' ? 'bg-blue-100 text-blue-700 animate-pulse' : '' }}
                             {{ $displayStatus === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
                             {{ $displayStatus === 'declined' ? 'bg-gray-100 text-gray-700' : '' }}
                         ">
@@ -223,6 +224,8 @@
                                 Ended - Waiting to be Completed
                             @elseif($displayStatus === 'pending_client_acceptance')
                                 Pending Your Approval
+                            @elseif($displayStatus === 'payment_processing')
+                                Payment Processing...
                             @else
                                 {{ ucfirst(str_replace('_', ' ', $displayStatus)) }}
                             @endif

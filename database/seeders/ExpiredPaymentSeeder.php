@@ -32,11 +32,23 @@ class ExpiredPaymentSeeder extends Seeder
             'platform_fee' => 50,
             'total_amount' => 550,
             'status' => 'payment_pending',
-            'payment_status' => 'unpaid',
             'scheduled_at' => now()->addDays(1)->setTime(10, 0),
             'accepted_at' => now()->subHour()->subMinutes(10), // Accepted 1 hour 10 minutes ago
             'payment_deadline' => now()->subMinutes(10), // Expired 10 minutes ago!
             'client_notes' => 'This consultation should be auto-cancelled because payment deadline has passed.',
+        ]);
+
+        // Create pending transaction
+        \App\Models\Transaction::create([
+            'consultation_id' => $consultation->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 550,
+            'lawyer_payout' => 500,
+            'platform_fee' => 50,
+            'status' => 'pending',
+            'payment_method' => null,
         ]);
 
         $this->command->info('✅ Created expired consultation:');

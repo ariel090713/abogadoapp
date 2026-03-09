@@ -24,7 +24,6 @@ class VideoConsultationSeeder extends Seeder
                 'password' => bcrypt('password'),
                 'role' => 'client',
                 'email_verified_at' => now(),
-                'onboarding_completed' => true,
                 'onboarding_completed_at' => now(),
             ]);
         }
@@ -37,7 +36,6 @@ class VideoConsultationSeeder extends Seeder
                 'password' => bcrypt('password'),
                 'role' => 'lawyer',
                 'email_verified_at' => now(),
-                'onboarding_completed' => true,
                 'onboarding_completed_at' => now(),
             ]);
 
@@ -45,12 +43,12 @@ class VideoConsultationSeeder extends Seeder
             if (!$lawyer->lawyerProfile) {
                 $lawyer->lawyerProfile()->create([
                     'ibp_number' => 'IBP-' . rand(100000, 999999),
-                    'years_of_experience' => 5,
+                    'years_experience' => 5,
                     'bio' => 'Experienced lawyer specializing in various legal matters.',
-                    'verification_status' => 'verified',
-                    'video_rate' => 1500.00,
-                    'chat_rate' => 1000.00,
-                    'document_review_rate' => 2000.00,
+                    'is_verified' => true,
+                    'video_rate_30min' => 1500.00,
+                    'chat_rate_30min' => 1000.00,
+                    'document_review_min_price' => 2000.00,
                 ]);
             }
         }
@@ -59,6 +57,7 @@ class VideoConsultationSeeder extends Seeder
 
         // Scenario 1: Video consultation scheduled for 5 minutes from now (ACTIVE SOON)
         $scheduledSoon = now()->addMinutes(5);
+        $paymentIntentId1 = 'pi_test_' . Str::random(20);
         $consultation1 = Consultation::create([
             'client_id' => $client->id,
             'lawyer_id' => $lawyer->id,
@@ -69,8 +68,6 @@ class VideoConsultationSeeder extends Seeder
             'rate' => 1500.00,
             'total_amount' => 1500.00,
             'status' => 'scheduled',
-            'payment_status' => 'paid',
-            'payment_intent_id' => 'pi_test_' . Str::random(20),
             'scheduled_at' => $scheduledSoon,
             'accepted_at' => now()->subHours(2),
             'payment_deadline' => now()->addDays(1),
@@ -80,13 +77,14 @@ class VideoConsultationSeeder extends Seeder
         Transaction::create([
             'consultation_id' => $consultation1->id,
             'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
             'type' => 'consultation_payment',
             'amount' => 1500.00,
             'lawyer_payout' => 1500.00,
             'platform_fee' => 0.00,
-            'status' => 'captured',
+            'status' => 'completed',
             'payment_method' => 'gcash',
-            'paymongo_payment_intent_id' => $consultation1->payment_intent_id,
+            'paymongo_payment_intent_id' => $paymentIntentId1,
             'processed_at' => now()->subHours(1),
         ]);
 
@@ -94,6 +92,7 @@ class VideoConsultationSeeder extends Seeder
 
         // Scenario 2: Video consultation happening NOW (ACTIVE)
         $scheduledNow = now()->subMinutes(5);
+        $paymentIntentId2 = 'pi_test_' . Str::random(20);
         $consultation2 = Consultation::create([
             'client_id' => $client->id,
             'lawyer_id' => $lawyer->id,
@@ -104,8 +103,6 @@ class VideoConsultationSeeder extends Seeder
             'rate' => 1500.00,
             'total_amount' => 1500.00,
             'status' => 'scheduled',
-            'payment_status' => 'paid',
-            'payment_intent_id' => 'pi_test_' . Str::random(20),
             'scheduled_at' => $scheduledNow,
             'accepted_at' => now()->subHours(3),
             'payment_deadline' => now()->addDays(1),
@@ -115,13 +112,14 @@ class VideoConsultationSeeder extends Seeder
         Transaction::create([
             'consultation_id' => $consultation2->id,
             'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
             'type' => 'consultation_payment',
             'amount' => 1500.00,
             'lawyer_payout' => 1500.00,
             'platform_fee' => 0.00,
-            'status' => 'captured',
+            'status' => 'completed',
             'payment_method' => 'card',
-            'paymongo_payment_intent_id' => $consultation2->payment_intent_id,
+            'paymongo_payment_intent_id' => $paymentIntentId2,
             'processed_at' => now()->subHours(2),
         ]);
 
@@ -129,6 +127,7 @@ class VideoConsultationSeeder extends Seeder
 
         // Scenario 3: Video consultation scheduled for tomorrow
         $scheduledTomorrow = now()->addDay()->setTime(14, 0);
+        $paymentIntentId3 = 'pi_test_' . Str::random(20);
         $consultation3 = Consultation::create([
             'client_id' => $client->id,
             'lawyer_id' => $lawyer->id,
@@ -139,8 +138,6 @@ class VideoConsultationSeeder extends Seeder
             'rate' => 1500.00,
             'total_amount' => 1500.00,
             'status' => 'scheduled',
-            'payment_status' => 'paid',
-            'payment_intent_id' => 'pi_test_' . Str::random(20),
             'scheduled_at' => $scheduledTomorrow,
             'accepted_at' => now()->subHours(5),
             'payment_deadline' => now()->addDays(2),
@@ -150,13 +147,14 @@ class VideoConsultationSeeder extends Seeder
         Transaction::create([
             'consultation_id' => $consultation3->id,
             'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
             'type' => 'consultation_payment',
             'amount' => 1500.00,
             'lawyer_payout' => 1500.00,
             'platform_fee' => 0.00,
-            'status' => 'captured',
+            'status' => 'completed',
             'payment_method' => 'gcash',
-            'paymongo_payment_intent_id' => $consultation3->payment_intent_id,
+            'paymongo_payment_intent_id' => $paymentIntentId3,
             'processed_at' => now()->subHours(4),
         ]);
 
@@ -164,6 +162,7 @@ class VideoConsultationSeeder extends Seeder
 
         // Scenario 4: Video consultation that just ended (ENDED)
         $scheduledEnded = now()->subMinutes(35);
+        $paymentIntentId4 = 'pi_test_' . Str::random(20);
         $consultation4 = Consultation::create([
             'client_id' => $client->id,
             'lawyer_id' => $lawyer->id,
@@ -174,8 +173,6 @@ class VideoConsultationSeeder extends Seeder
             'rate' => 1500.00,
             'total_amount' => 1500.00,
             'status' => 'scheduled',
-            'payment_status' => 'paid',
-            'payment_intent_id' => 'pi_test_' . Str::random(20),
             'scheduled_at' => $scheduledEnded,
             'accepted_at' => now()->subHours(4),
             'payment_deadline' => now()->addDays(1),
@@ -185,13 +182,14 @@ class VideoConsultationSeeder extends Seeder
         Transaction::create([
             'consultation_id' => $consultation4->id,
             'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
             'type' => 'consultation_payment',
             'amount' => 1500.00,
             'lawyer_payout' => 1500.00,
             'platform_fee' => 0.00,
-            'status' => 'captured',
+            'status' => 'completed',
             'payment_method' => 'card',
-            'paymongo_payment_intent_id' => $consultation4->payment_intent_id,
+            'paymongo_payment_intent_id' => $paymentIntentId4,
             'processed_at' => now()->subHours(3),
         ]);
 
@@ -208,18 +206,30 @@ class VideoConsultationSeeder extends Seeder
             'rate' => 1500.00,
             'total_amount' => 1500.00,
             'status' => 'payment_pending',
-            'payment_status' => 'unpaid',
-            'payment_intent_id' => null,
             'scheduled_at' => now()->addHours(24),
             'accepted_at' => now()->subMinutes(30),
             'payment_deadline' => now()->addHours(23),
             'video_room_sid' => null, // No room yet - will be created after payment
         ]);
 
+        Transaction::create([
+            'consultation_id' => $consultation5->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 1500.00,
+            'lawyer_payout' => 1500.00,
+            'platform_fee' => 0.00,
+            'status' => 'pending',
+            'payment_method' => null,
+            'paymongo_payment_intent_id' => null,
+        ]);
+
         $this->command->info("✓ Created video consultation pending payment (ID: {$consultation5->id})");
 
         // Scenario 6: Chat consultation for comparison (ACTIVE NOW)
         $chatScheduledNow = now()->subMinutes(3);
+        $paymentIntentId6 = 'pi_test_' . Str::random(20);
         $consultation6 = Consultation::create([
             'client_id' => $client->id,
             'lawyer_id' => $lawyer->id,
@@ -230,8 +240,6 @@ class VideoConsultationSeeder extends Seeder
             'rate' => 1000.00,
             'total_amount' => 1000.00,
             'status' => 'scheduled',
-            'payment_status' => 'paid',
-            'payment_intent_id' => 'pi_test_' . Str::random(20),
             'scheduled_at' => $chatScheduledNow,
             'accepted_at' => now()->subHours(2),
             'payment_deadline' => now()->addDays(1),
@@ -240,13 +248,14 @@ class VideoConsultationSeeder extends Seeder
         Transaction::create([
             'consultation_id' => $consultation6->id,
             'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
             'type' => 'consultation_payment',
             'amount' => 1000.00,
             'lawyer_payout' => 1000.00,
             'platform_fee' => 0.00,
-            'status' => 'captured',
+            'status' => 'completed',
             'payment_method' => 'gcash',
-            'paymongo_payment_intent_id' => $consultation6->payment_intent_id,
+            'paymongo_payment_intent_id' => $paymentIntentId6,
             'processed_at' => now()->subHours(1),
         ]);
 

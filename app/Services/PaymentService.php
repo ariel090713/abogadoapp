@@ -75,11 +75,8 @@ class PaymentService
                     'checkout_url' => $checkoutUrl,
                 ]);
 
-                // Store checkout session ID
-                $consultation->update([
-                    'payment_intent_id' => $checkoutSessionId,
-                    'payment_status' => 'pending',
-                ]);
+                // Store checkout session ID in transaction (not consultation)
+                // Transaction is created with payment_intent_id
 
                 // Create pending transaction record
                 $platformFee = 0; // Platform fee set to 0
@@ -99,7 +96,7 @@ class PaymentService
                     'paymongo_payment_intent_id' => $checkoutSessionId,
                 ]);
 
-                Log::info('Consultation updated with payment_intent_id', [
+                Log::info('Transaction created with payment_intent_id', [
                     'consultation_id' => $consultation->id,
                     'payment_intent_id' => $checkoutSessionId,
                 ]);
@@ -244,6 +241,7 @@ class PaymentService
 
     /**
      * Process successful payment
+     * NOTE: This method is being phased out. Webhook handlers now update transaction directly.
      */
     public function processSuccessfulPayment(
         Consultation $consultation, 
@@ -298,13 +296,12 @@ class PaymentService
             ]);
         }
 
-        // Update consultation status
+        // Update consultation status (NOT payment_status - that comes from transaction)
         // Document reviews go to in_progress immediately, others go to scheduled
         $status = $consultation->consultation_type === 'document_review' ? 'in_progress' : 'scheduled';
         
         $updateData = [
             'status' => $status,
-            'payment_status' => 'paid',
         ];
 
         // For document reviews, set started_at and calculate review completion deadline

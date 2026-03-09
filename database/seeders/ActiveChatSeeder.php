@@ -30,10 +30,24 @@ class ActiveChatSeeder extends Seeder
             'rate' => 1500.00,
             'total_amount' => 1500.00,
             'status' => 'in_progress',
-            'payment_status' => 'paid',
             'scheduled_at' => now()->subMinutes(10), // Started 10 minutes ago
             'started_at' => now()->subMinutes(10),
             'client_notes' => 'Active consultation for real-time chat testing',
+        ]);
+
+        // Create completed transaction
+        \App\Models\Transaction::create([
+            'consultation_id' => $consultation->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 1500.00,
+            'lawyer_payout' => 1500.00,
+            'platform_fee' => 0.00,
+            'status' => 'completed',
+            'payment_method' => 'gcash',
+            'paymongo_payment_intent_id' => 'pi_test_' . uniqid(),
+            'processed_at' => now()->subMinutes(15),
         ]);
 
         // Create sample messages

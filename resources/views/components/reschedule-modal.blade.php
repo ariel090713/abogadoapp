@@ -1,4 +1,5 @@
 <!-- Reschedule Request Modal -->
+@if($showRescheduleModal ?? false)
 <flux:modal name="reschedule-modal" class="space-y-6 max-w-2xl">
     <div>
         <flux:heading size="lg">Request Reschedule</flux:heading>
@@ -23,7 +24,7 @@
     </div>
 
     <!-- Time Slots -->
-    @if($selectedDate && count($availableSlots) > 0)
+    @if(isset($selectedDate) && $selectedDate && count($availableSlots ?? []) > 0)
         <div class="space-y-2">
             <flux:label>Available Time Slots</flux:label>
             <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 rounded-lg">
@@ -32,7 +33,7 @@
                         type="button"
                         wire:click="$set('selectedSlot', '{{ $slot['time'] }}')"
                         class="px-3 py-2 text-sm rounded-lg border transition
-                            {{ $selectedSlot === $slot['time'] 
+                            {{ ($selectedSlot ?? '') === $slot['time'] 
                                 ? 'bg-primary-500 text-white border-primary-600' 
                                 : 'bg-white text-gray-700 border-gray-300 hover:border-primary-500 hover:bg-primary-50' 
                             }}"
@@ -43,7 +44,7 @@
             </div>
             <flux:error name="selectedSlot" />
         </div>
-    @elseif($selectedDate && count($availableSlots) === 0)
+    @elseif(isset($selectedDate) && $selectedDate && count($availableSlots ?? []) === 0)
         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div class="flex items-start gap-3">
                 <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,8 +92,10 @@
         </flux:button>
     </div>
 </flux:modal>
+@endif
 
 <!-- Decline Reschedule Modal -->
+@if($showDeclineRescheduleModal ?? false)
 <flux:modal name="decline-reschedule-modal" class="space-y-6">
     <div>
         <flux:heading size="lg">Decline Reschedule Request</flux:heading>
@@ -102,11 +105,11 @@
     <div class="space-y-2">
         <flux:label>Reason for Declining <span class="text-red-500">*</span></flux:label>
         <flux:textarea 
-            wire:model="declineReason"
+            wire:model="rescheduleDeclineReason"
             rows="4"
             placeholder="Explain why you cannot accept this reschedule..."
         />
-        <flux:error name="declineReason" />
+        <flux:error name="rescheduleDeclineReason" />
         <p class="text-xs text-gray-500">Minimum 10 characters</p>
     </div>
 
@@ -131,3 +134,4 @@
         </flux:button>
     </div>
 </flux:modal>
+@endif

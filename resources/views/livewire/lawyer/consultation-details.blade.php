@@ -14,6 +14,9 @@
         </a>
     </div>
 
+    <!-- Pending Reschedule Banner -->
+    <x-pending-reschedule-banner :consultation="$consultation" />
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main Content -->
         <div class="lg:col-span-2 space-y-6">
@@ -53,11 +56,14 @@
                                     {{ $consultation->status === 'pending_client_acceptance' ? 'bg-purple-100 text-purple-700' : '' }}
                                     {{ $consultation->status === 'awaiting_quote_approval' ? 'bg-purple-100 text-purple-700' : '' }}
                                     {{ $consultation->status === 'payment_pending' ? 'bg-orange-100 text-orange-700' : '' }}
+                                    {{ $consultation->status === 'payment_processing' ? 'bg-blue-100 text-blue-700 animate-pulse' : '' }}
                                     {{ $consultation->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
                                     {{ $consultation->status === 'declined' ? 'bg-gray-100 text-gray-700' : '' }}
                                 ">
                                     @if($consultation->status === 'pending_client_acceptance')
                                         Pending Client Approval
+                                    @elseif($consultation->status === 'payment_processing')
+                                        Payment Processing...
                                     @else
                                         {{ ucfirst(str_replace('_', ' ', $consultation->status)) }}
                                     @endif
@@ -661,6 +667,13 @@
                                 Mark as Completed
                             </button>
                             <p class="text-xs text-gray-500 mt-2">Provide completion notes and/or upload documents</p>
+                        </div>
+                    @endif
+
+                    <!-- Reschedule Button -->
+                    @if(in_array($consultation->status, ['scheduled', 'payment_pending']))
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <x-reschedule-button :consultation="$consultation" />
                         </div>
                     @endif
                 </div>
@@ -1382,3 +1395,7 @@
         });
     });
 </script>
+
+
+<!-- Reschedule Modals -->
+<x-reschedule-modal :consultation="$consultation" />

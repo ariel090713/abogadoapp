@@ -74,11 +74,22 @@ class PaymentTestSeeder extends Seeder
             'platform_fee' => 90,
             'total_amount' => 990,
             'status' => 'accepted',
-            'payment_status' => 'unpaid',
             'scheduled_at' => now()->addDays(3)->setTime(14, 0),
             'accepted_at' => now(),
             'payment_deadline' => now()->addHour(),
             'client_notes' => 'This is a test consultation for payment testing.',
+        ]);
+
+        \App\Models\Transaction::create([
+            'consultation_id' => $consultation->id,
+            'user_id' => $client->id,
+            'lawyer_id' => $lawyer->id,
+            'type' => 'consultation_payment',
+            'amount' => 990,
+            'lawyer_payout' => 900,
+            'platform_fee' => 90,
+            'status' => 'pending',
+            'payment_method' => null,
         ]);
 
         $this->command->info('✅ Payment test data created successfully!');

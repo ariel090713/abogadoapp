@@ -11,18 +11,35 @@ class PopulateTransactionsSeeder extends Seeder
 {
     public function run(): void
     {
-        // Find all paid consultations without transactions
-        $consultations = Consultation::where('payment_status', 'paid')
-            ->whereDoesntHave('transaction')
-            ->with(['client', 'lawyer'])
+        // Find all consultations with completed transactions but no transaction record
+        $consultations = Consultation::whereHas('transaction', function($q) {
+                $q->where('status', 'completed');
+            })
+            ->orWhere(function($q) {
+                // Or consultations that should have transactions but don't
+                $q->whereIn('status', ['completed', 'scheduled', 'in_progress'])
+                  ->whereDoesntHave('transaction');
+            })
+            ->with(['client', 'lawyer', 'transaction'])
             ->get();
 
-        echo "Found {$consultations->count()} paid consultations without transactions\n";
+        echo "Found {$consultations->count()} consultations to check\n";
 
+        $created = 0;
         foreach ($consultations as $consultation) {
+            // Skip if already has transaction
+            if ($consultation->transaction) {
+                continue;
+            }
+
             // Calculate fees
             $platformFee = $consultation->platform_fee ?? ($consultation->total_amount * 0.10);
             $lawyerPayout = $consultation->rate ?? ($consultation->total_amount * 0.90);
+
+            // Determine status based on consultation status
+            $status = in_array($consultation->status, ['completed', 'scheduled', 'in_progress']) 
+                ? 'completed' 
+                : 'pending';
 
             // Create transaction
             $transaction = Transaction::create([
@@ -33,15 +50,17 @@ class PopulateTransactionsSeeder extends Seeder
                 'amount' => $consultation->total_amount,
                 'platform_fee' => $platformFee,
                 'lawyer_payout' => $lawyerPayout,
-                'status' => 'completed',
+                'status' => $status,
                 'payment_method' => 'card',
-                'processed_at' => $consultation->updated_at,
+                'processed_at' => $status === 'completed' ? $consultation->updated_at : null,
             ]);
 
+            $created++;
             echo "Created transaction #{$transaction->id} for consultation #{$consultation->id} - Lawyer: {$consultation->lawyer->name}\n";
         }
 
         echo "\nTransaction Summary:\n";
+        echo "Created: {$created} transactions\n";
         echo "Total Transactions: " . Transaction::count() . "\n";
         
         $lawyers = User::where('role', 'lawyer')->get();
