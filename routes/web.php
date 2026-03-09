@@ -2,9 +2,15 @@
 
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\Api\AIChatController;
 use App\Livewire\LawyerProfile;
 use App\Livewire\LawyerSearch;
 use Illuminate\Support\Facades\Route;
+
+// API Routes (with CSRF protection and rate limiting)
+Route::middleware(['web', 'throttle:20,1'])->group(function () {
+    Route::post('/api/ai-chat', [AIChatController::class, 'chat'])->name('api.ai-chat');
+});
 
 Route::get('/', function () {
     return view('welcome');

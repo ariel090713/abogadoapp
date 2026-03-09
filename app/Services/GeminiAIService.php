@@ -8,11 +8,21 @@ use Illuminate\Support\Facades\Log;
 class GeminiAIService
 {
     protected $apiKey;
-    protected $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    protected $model;
+    protected $baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/';
 
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key');
+        $this->model = config('services.gemini.model', 'gemini-1.5-flash');
+    }
+
+    /**
+     * Get the full API URL for the configured model
+     */
+    protected function getApiUrl()
+    {
+        return $this->baseUrl . $this->model . ':generateContent';
     }
 
     /**
@@ -44,7 +54,7 @@ class GeminiAIService
             }
 
             $response = Http::timeout(30)
-                ->post($this->apiUrl . '?key=' . $this->apiKey, [
+                ->post($this->getApiUrl() . '?key=' . $this->apiKey, [
                     'contents' => $contents,
                     'generationConfig' => [
                         'temperature' => 0.7,

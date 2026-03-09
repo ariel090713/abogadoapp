@@ -43,6 +43,16 @@ class LawyerSearch extends Component
         }
     }
 
+    public function openAIModal()
+    {
+        $this->showAIModal = true;
+        $this->aiMode = false;
+        $this->conversation = [];
+        $this->userMessage = '';
+        $this->aiRecommendedSpecializations = [];
+        $this->isAIThinking = false;
+    }
+
     public function closeModal()
     {
         $this->showAIModal = false;
@@ -71,13 +81,16 @@ class LawyerSearch extends Component
             return;
         }
 
-        // Add user message to conversation
+        // Store user input
+        $userInput = $this->userMessage;
+        
+        // Add user message to conversation (for AI context, not for display - JS already displayed it)
         $this->conversation[] = [
             'role' => 'user',
-            'content' => $this->userMessage
+            'content' => $userInput
         ];
 
-        $userInput = $this->userMessage;
+        // Clear input and show loading
         $this->userMessage = '';
         $this->isAIThinking = true;
 
@@ -141,10 +154,14 @@ Otherwise, just have a natural conversation to understand their needs better.";
                             $this->aiRecommendedSpecializations = $json['specializations'];
 
                             // Add friendly message
+                            $friendlyMessage = $json['explanation'] ?? 'Based on your concern, I recommend these practice areas. Click "View Filtered Lawyers" to see lawyers who specialize in these areas.';
                             $this->conversation[] = [
                                 'role' => 'assistant',
-                                'content' => $json['explanation'] ?? 'Based on your concern, I recommend these practice areas. Click "View Filtered Lawyers" to see lawyers who specialize in these areas.'
+                                'content' => $friendlyMessage
                             ];
+                            
+                            // Dispatch event to update UI via JavaScript
+                            $this->dispatch('ai-response-received', message: $friendlyMessage);
 
                             $this->isAIThinking = false;
                             return;
@@ -159,11 +176,18 @@ Otherwise, just have a natural conversation to understand their needs better.";
                     'role' => 'assistant',
                     'content' => $aiMessage
                 ];
+                
+                // Dispatch event to update UI via JavaScript
+                $this->dispatch('ai-response-received', message: $aiMessage);
             } else {
+                $errorMessage = 'I apologize, but I encountered an error. Please try browsing lawyers manually or try again.';
                 $this->conversation[] = [
                     'role' => 'assistant',
-                    'content' => 'I apologize, but I encountered an error. Please try browsing lawyers manually or try again.'
+                    'content' => $errorMessage
                 ];
+                
+                // Dispatch event to update UI via JavaScript
+                $this->dispatch('ai-response-received', message: $errorMessage);
             }
 
         } catch (\Exception $e) {
@@ -172,10 +196,14 @@ Otherwise, just have a natural conversation to understand their needs better.";
                 'trace' => $e->getTraceAsString()
             ]);
 
+            $errorMessage = 'I apologize, but I encountered an error. Please try browsing lawyers manually.';
             $this->conversation[] = [
                 'role' => 'assistant',
-                'content' => 'I apologize, but I encountered an error. Please try browsing lawyers manually.'
+                'content' => $errorMessage
             ];
+            
+            // Dispatch event to update UI via JavaScript
+            $this->dispatch('ai-response-received', message: $errorMessage);
         }
 
         $this->isAIThinking = false;

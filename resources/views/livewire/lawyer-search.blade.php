@@ -82,71 +82,29 @@
                         </div>
 
                         <!-- Chat Messages -->
-                        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
-                            @foreach($conversation as $message)
-                                @if($message['role'] === 'user')
-                                    <!-- User Message -->
-                                    <div class="flex justify-end">
-                                        <div class="bg-primary-700 text-white rounded-2xl rounded-tr-sm px-6 py-3 max-w-[80%]">
-                                            <p class="text-sm md:text-base">{{ $message['content'] }}</p>
-                                        </div>
-                                    </div>
-                                @else
-                                    <!-- AI Message -->
-                                    <div class="flex justify-start">
-                                        <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-6 py-3 max-w-[80%] shadow-sm">
-                                            <p class="text-sm md:text-base text-gray-800">{{ $message['content'] }}</p>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
-
-                            @if($isAIThinking)
-                                <div class="flex justify-start">
-                                    <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-6 py-3 shadow-sm">
-                                        <div class="flex items-center gap-2">
-                                            <div class="flex gap-1">
-                                                <div class="w-2 h-2 bg-primary-700 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-                                                <div class="w-2 h-2 bg-primary-700 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-                                                <div class="w-2 h-2 bg-primary-700 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
-                                            </div>
-                                            <span class="text-sm text-gray-600">AI is thinking...</span>
-                                        </div>
-                                    </div>
+                        <!-- Chat Messages -->
+                        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50" id="chatMessages">
+                            <!-- Initial AI greeting -->
+                            <div class="flex justify-start">
+                                <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-6 py-3 max-w-[80%] shadow-sm">
+                                    <p class="text-sm md:text-base text-gray-800">{{ \App\Models\AISetting::get('ai_greeting', 'Hello! I\'m here to help you find the right lawyer. Can you describe your legal concern?') }}</p>
                                 </div>
-                            @endif
-                        </div>
-
-                        <!-- Recommendation Button (if AI has recommendations) -->
-                        @if(!empty($aiRecommendedSpecializations))
-                            <div class="p-4 bg-primary-50 border-t border-primary-200">
-                                <button 
-                                    wire:click="applyAIFilters"
-                                    class="w-full bg-gradient-to-r from-primary-700 to-accent-700 text-white px-6 py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
-                                >
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                    </svg>
-                                    <span>View Filtered Lawyers ({{ count($aiRecommendedSpecializations) }} specializations)</span>
-                                </button>
                             </div>
-                        @endif
-
+                        </div>
+                        
                         <!-- Chat Input -->
                         <div class="p-6 bg-white border-t border-gray-200">
-                            <form wire:submit.prevent="sendMessage" class="flex gap-3">
+                            <form onsubmit="event.preventDefault(); sendMessageToAI(document.getElementById('aiChatInput').value);" class="flex gap-3">
                                 <input 
                                     type="text"
-                                    wire:model="userMessage"
+                                    id="aiChatInput"
                                     placeholder="Type your message..."
                                     class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                    @if($isAIThinking) disabled @endif
                                 >
                                 <button 
                                     type="submit"
+                                    id="aiSendBtn"
                                     class="bg-primary-700 text-white px-6 py-3 rounded-xl hover:bg-primary-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                                    @if($isAIThinking) disabled @endif
                                 >
                                     <span class="hidden md:inline">Send</span>
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,6 +145,17 @@
                         </svg>
                     </div>
                 </div>
+
+                <!-- AI Assistant Button -->
+                <button 
+                    wire:click="openAIModal"
+                    class="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary-700 to-accent-700 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-medium whitespace-nowrap"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    <span>Ask AI</span>
+                </button>
 
                 <!-- Practice Area Dropdown -->
                 <div class="w-full lg:w-64" x-data="{ open: false }">
@@ -481,4 +450,190 @@
             </div>
         @endif
     </div>
+    
+    <!-- AI Chat Script (inside main div to maintain single root element) -->
+    <script>
+        // AI Chat Functions (Global scope)
+        window.conversation = [
+            {
+                role: 'assistant',
+                content: '{{ addslashes(\App\Models\AISetting::get('ai_greeting', 'Hello! I\'m here to help you find the right lawyer. Can you describe your legal concern?')) }}'
+            }
+        ];
+        window.aiRecommendations = [];
+        window.isProcessing = false;
+        
+        window.escapeHtml = function(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        };
+        
+        window.scrollToBottom = function() {
+            const chatContainer = document.getElementById('chatMessages');
+            if (chatContainer) {
+                setTimeout(() => {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 100);
+            }
+        };
+        
+        window.addUserMessage = function(message) {
+            const chatContainer = document.getElementById('chatMessages');
+            if (!chatContainer) return;
+            
+            const messageHtml = `
+                <div class="flex justify-end">
+                    <div class="bg-primary-700 text-white rounded-2xl rounded-tr-sm px-6 py-3 max-w-[80%]">
+                        <p class="text-sm md:text-base">${window.escapeHtml(message)}</p>
+                    </div>
+                </div>
+            `;
+            chatContainer.insertAdjacentHTML('beforeend', messageHtml);
+            window.scrollToBottom();
+        };
+        
+        window.addAIMessage = function(message) {
+            const chatContainer = document.getElementById('chatMessages');
+            if (!chatContainer) return;
+            
+            const messageHtml = `
+                <div class="flex justify-start">
+                    <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-6 py-3 max-w-[80%] shadow-sm">
+                        <p class="text-sm md:text-base text-gray-800">${window.escapeHtml(message)}</p>
+                    </div>
+                </div>
+            `;
+            chatContainer.insertAdjacentHTML('beforeend', messageHtml);
+            window.scrollToBottom();
+        };
+        
+        window.showTypingIndicator = function() {
+            const chatContainer = document.getElementById('chatMessages');
+            if (!chatContainer) return;
+            
+            const indicatorHtml = `
+                <div class="flex justify-start" id="typingIndicator">
+                    <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-sm px-6 py-3 shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="flex gap-1">
+                                <div class="w-2 h-2 bg-primary-700 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                                <div class="w-2 h-2 bg-primary-700 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                                <div class="w-2 h-2 bg-primary-700 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                            </div>
+                            <span class="text-sm text-gray-600">AI is thinking...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatContainer.insertAdjacentHTML('beforeend', indicatorHtml);
+            window.scrollToBottom();
+        };
+        
+        window.hideTypingIndicator = function() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        };
+        
+        window.sendMessageToAI = async function(message) {
+            if (window.isProcessing || !message.trim()) return;
+            
+            window.isProcessing = true;
+            const input = document.getElementById('aiChatInput');
+            const sendBtn = document.getElementById('aiSendBtn');
+            
+            // Disable input
+            if (input) input.disabled = true;
+            if (sendBtn) sendBtn.disabled = true;
+            
+            // Add user message to conversation and DOM
+            window.conversation.push({ role: 'user', content: message });
+            window.addUserMessage(message);
+            
+            // Clear input
+            if (input) input.value = '';
+            
+            // Show typing indicator
+            window.showTypingIndicator();
+            
+            try {
+                // Get CSRF token
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                
+                // Call API
+                const response = await fetch('{{ route('api.ai-chat') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        conversation: window.conversation
+                    })
+                });
+                
+                const data = await response.json();
+                
+                window.hideTypingIndicator();
+                
+                if (data.success) {
+                    // Add AI response to conversation and DOM
+                    window.conversation.push({ role: 'assistant', content: data.message });
+                    window.addAIMessage(data.message);
+                    
+                    // Handle recommendations
+                    if (data.recommendations && data.recommendations.length > 0) {
+                        window.aiRecommendations = data.recommendations;
+                        window.showRecommendationButton();
+                    }
+                } else {
+                    window.addAIMessage(data.message || 'Sorry, I encountered an error. Please try again.');
+                }
+            } catch (error) {
+                console.error('AI Chat Error:', error);
+                window.hideTypingIndicator();
+                window.addAIMessage('Sorry, I encountered an error. Please try again.');
+            } finally {
+                window.isProcessing = false;
+                if (input) input.disabled = false;
+                if (sendBtn) sendBtn.disabled = false;
+                if (input) input.focus();
+            }
+        };
+        
+        window.showRecommendationButton = function() {
+            const existingBtn = document.getElementById('recommendationButton');
+            if (existingBtn) return;
+            
+            const chatContainer = document.getElementById('chatMessages');
+            if (!chatContainer) return;
+            
+            const buttonHtml = `
+                <div class="p-4 bg-primary-50 border-t border-primary-200 mt-4" id="recommendationButton">
+                    <button 
+                        onclick="window.applyRecommendations()"
+                        class="w-full bg-gradient-to-r from-primary-700 to-accent-700 text-white px-6 py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        <span>View Filtered Lawyers (${window.aiRecommendations.length} specializations)</span>
+                    </button>
+                </div>
+            `;
+            chatContainer.parentElement.insertAdjacentHTML('beforeend', buttonHtml);
+        };
+        
+        window.applyRecommendations = function() {
+            if (window.aiRecommendations.length > 0 && typeof Livewire !== 'undefined') {
+                @this.set('specializations', window.aiRecommendations);
+                @this.call('closeModal');
+            }
+        };
+    </script>
 </div>

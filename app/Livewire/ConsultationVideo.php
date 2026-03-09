@@ -426,24 +426,11 @@ class ConsultationVideo extends Component
             // Load sender relationship
             $message->load('sender');
 
-            // Broadcast message
+            // Broadcast message (this will trigger appendNewMessage for all users including sender)
             $broadcasting->broadcastMessage($message);
 
             // Reset form
             $this->reset(['newMessage', 'attachments']);
-
-            // Dispatch browser event to append message to DOM
-            $this->dispatch('message-appended-to-dom', message: [
-                'id' => $message->id,
-                'sender_id' => $message->sender_id,
-                'sender_name' => $message->sender->name,
-                'sender_avatar' => $message->sender->profile_photo_url ?? null,
-                'message' => $message->message,
-                'attachments' => $message->attachments,
-                'read_at' => $message->read_at?->toIso8601String(),
-                'created_at' => $message->created_at->format('M d, Y h:i A'),
-                'is_mine' => true,
-            ]);
 
             Log::info('Video chat message sent', [
                 'message_id' => $message->id,
