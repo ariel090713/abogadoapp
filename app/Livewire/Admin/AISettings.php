@@ -37,7 +37,7 @@ class AISettings extends Component
         'ai_rules' => 'required|string',
         'ai_greeting' => 'required|string',
         'kb_title' => 'required|string|max:255',
-        'kb_content' => 'required|string',
+        'kb_content' => 'nullable|string|max:100000', // 100k characters max
         'kb_priority' => 'required|integer|min:0|max:10',
     ];
 
@@ -82,7 +82,7 @@ class AISettings extends Component
             $this->validate([
                 'kb_title' => 'required|string|max:255',
                 'kb_type' => 'required|in:text,file',
-                'kb_content' => 'required|string',
+                'kb_content' => 'required|string|max:100000', // 100k characters
                 'kb_priority' => 'required|integer|min:0|max:10',
             ]);
         } else {
@@ -123,15 +123,15 @@ class AISettings extends Component
                 $knowledge = AIKnowledgeBase::findOrFail($this->editingKnowledgeId);
                 $knowledge->update($data);
                 
-                // Process chunks after update
-                $knowledge->processAndStoreChunks();
+                // Process chunks after update (2000 chars per chunk, 400 overlap)
+                $knowledge->processAndStoreChunks(2000, 400);
                 
                 session()->flash('success', 'Knowledge base entry updated successfully!');
             } else {
                 $knowledge = AIKnowledgeBase::create($data);
                 
-                // Process chunks after creation
-                $knowledge->processAndStoreChunks();
+                // Process chunks after creation (2000 chars per chunk, 400 overlap)
+                $knowledge->processAndStoreChunks(2000, 400);
                 
                 session()->flash('success', 'Knowledge base entry added successfully!');
             }
@@ -156,17 +156,66 @@ class AISettings extends Component
         try {
             if ($extension === 'txt') {
                 return file_get_contents($tempPath);
+                
             } elseif ($extension === 'pdf') {
-                // For PDF, you'd need a library like smalot/pdfparser
-                // For now, return a placeholder
-                return "PDF content from: " . $file->getClientOriginalName();
+                // Use smalot/pdfparser to extract text from PDF
+                $parser = new \Smalot\PdfParser\Parser();
+                $pdf = $parser->parseFile($tempPath);
+                $text = $pdf->getText();
+                
+                // Clean up the text
+                $text = preg_replace('/\s+/', ' ', $text); // Replace multiple spaces
+                $text = trim($text);
+                
+                if (empty($text)) {
+                    return "PDF file uploaded: " . $file->getClientOriginalName() . " (No extractable text found - may be image-based PDF)";
+                }
+                
+                return $text;
+                
+            } elseif (in_array($extension, ['doc', 'docx'])) {
+                // Use PhpWord to extract text from DOC/DOCX
+                $phpWord = \PhpOffice\PhpWord\IOFactory::load($tempPath);
+                $text = '';
+                
+                foreach ($phpWord->getSections() as $section) {
+                    foreach ($section->getElements() as $element) {
+                        if (method_exists($element, 'getText')) {
+                            $text .= $element->getText() . ' ';
+                        } elseif (method_exists($element, 'getElements')) {
+                            // Handle nested elements (like tables, lists)
+                            foreach ($element->getElements() as $childElement) {
+                                if (method_exists($childElement, 'getText')) {
+                                    $text .= $childElement->getText() . ' ';
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Clean up the text
+                $text = preg_replace('/\s+/', ' ', $text);
+                $text = trim($text);
+                
+                if (empty($text)) {
+                    return "Word document uploaded: " . $file->getClientOriginalName() . " (No extractable text found)";
+                }
+                
+                return $text;
+                
             } else {
-                // For DOC/DOCX, you'd need PhpWord or similar
-                return "Document content from: " . $file->getClientOriginalName();
+                return "Document uploaded: " . $file->getClientOriginalName() . " (Unsupported format)";
             }
+            
         } catch (\Exception $e) {
-            \Log::error('File text extraction failed', ['error' => $e->getMessage()]);
-            return "Content from file: " . $file->getClientOriginalName();
+            \Log::error('File text extraction failed', [
+                'file' => $file->getClientOriginalName(),
+                'extension' => $extension,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return "File uploaded: " . $file->getClientOriginalName() . " (Text extraction failed: " . $e->getMessage() . ")";
         }
     }
 

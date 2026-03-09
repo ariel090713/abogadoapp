@@ -50,8 +50,11 @@ class AIChatController extends Controller
             $personality = AISetting::get('ai_personality', 'Professional and helpful legal assistant');
             $rules = AISetting::get('ai_rules', 'Be helpful and guide users to find the right lawyer');
 
-            // Get knowledge base context
-            $knowledgeContext = AIKnowledgeBase::getCombinedContext();
+            // Get user's latest message for context search
+            $userMessage = $validated['message'];
+            
+            // Get knowledge base context (relevant chunks based on user query)
+            $knowledgeContext = AIKnowledgeBase::getCombinedContext($userMessage);
 
             // Get available specializations
             $specializations = Specialization::all()->map(function($spec) {

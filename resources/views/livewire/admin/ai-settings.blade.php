@@ -166,14 +166,29 @@
                     <!-- Content (shown only for text type) -->
                     @if($kb_type === 'text')
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Content 
+                                <span class="text-gray-500 font-normal">({{ strlen($kb_content ?? '') }} / 100,000 characters)</span>
+                            </label>
                             <textarea 
-                                wire:model="kb_content"
-                                rows="10"
+                                wire:model.live="kb_content"
+                                rows="15"
                                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm"
-                                placeholder="Enter detailed information that the AI should know..."
+                                placeholder="Enter detailed information that the AI should know...
+
+Example:
+Philippine Labor Law Basics:
+- Regular employees are entitled to 13th month pay
+- Minimum wage varies by region
+- Overtime pay is 125% of regular rate
+..."
                             ></textarea>
-                            <p class="text-sm text-gray-500 mt-1">AI will use this information to answer questions accurately</p>
+                            <div class="flex items-center justify-between mt-1">
+                                <p class="text-sm text-gray-500">AI will use this information to answer questions accurately</p>
+                                @if(strlen($kb_content ?? '') > 90000)
+                                    <p class="text-sm text-orange-600 font-medium">⚠️ Approaching character limit</p>
+                                @endif
+                            </div>
                             @error('kb_content') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
                         </div>
                     @endif
