@@ -136,7 +136,7 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                         <option value="">Select a category</option>
                         @foreach($categories as $cat)
-                            <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                            <option value="{{ $cat }}">{{ $cat }}</option>
                         @endforeach
                     </select>
                     @error('category') <span class="text-sm text-red-600">{{ $message }}</span> @enderror

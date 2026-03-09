@@ -1,4 +1,8 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<x-slot name="sidebar">
+    <x-admin-sidebar />
+</x-slot>
+
+<div class="p-4 sm:p-6 lg:p-8">
     <!-- Header -->
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Document Template Management</h1>
@@ -92,12 +96,12 @@
 
                         <!-- Form Fields Preview -->
                         <div class="mb-4">
-                            <p class="text-sm font-medium text-gray-700 mb-2">Form Fields ({{ count($template->form_fields) }}):</p>
+                            <p class="text-sm font-medium text-gray-700 mb-2">Form Fields ({{ count($template->form_fields ?? []) }}):</p>
                             <div class="flex flex-wrap gap-2">
-                                @foreach($template->form_fields as $field)
+                                @foreach(($template->form_fields ?? []) as $field)
                                     <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                        {{ $field['label'] }}
-                                        @if($field['required'])
+                                        {{ $field['label'] ?? 'N/A' }}
+                                        @if(($field['required'] ?? false))
                                             <span class="text-red-500">*</span>
                                         @endif
                                     </span>
@@ -163,7 +167,7 @@
 
     <!-- Create/Edit Modal -->
     @if($showModal)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                 <div class="p-6">
                     <!-- Modal Header -->
@@ -202,18 +206,15 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Category <span class="text-red-500">*</span>
                             </label>
-                            <input 
-                                type="text" 
+                            <select 
                                 wire:model="category"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                placeholder="e.g., Affidavits, Contracts, Deeds"
-                                list="categories"
                             >
-                            <datalist id="categories">
+                                <option value="">Select a category</option>
                                 @foreach($categories as $cat)
-                                    <option value="{{ $cat }}">
+                                    <option value="{{ $cat }}">{{ $cat }}</option>
                                 @endforeach
-                            </datalist>
+                            </select>
                             @error('category') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
@@ -321,13 +322,13 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Sample Output Template
-                                <span class="text-gray-500 text-xs">(Optional - use {{field_name}} for placeholders)</span>
+                                <span class="text-gray-500 text-xs">(Optional - use @{{ field_name }} for placeholders)</span>
                             </label>
                             <textarea 
                                 wire:model="sampleOutput"
                                 rows="6"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm"
-                                placeholder="e.g., I, {{full_name}}, of legal age, hereby declare..."
+                                placeholder="e.g., I, @{{ full_name }}, of legal age, hereby declare..."
                             ></textarea>
                             @error('sampleOutput') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
@@ -379,7 +380,7 @@
 
     <!-- Delete Confirmation Modal -->
     @if($showDeleteModal)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
                 <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
                     <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -227,12 +227,25 @@ class TemplateManagement extends Component
             ->orderBy('name')
             ->paginate(20);
 
-        // Get unique categories for filter
-        $categories = DocumentTemplate::distinct()
-            ->pluck('category')
-            ->filter()
-            ->sort()
-            ->values();
+        // Get unique categories for filter - use predefined list
+        $categories = [
+            'Contracts',
+            'Affidavits',
+            'Agreements',
+            'Legal Letters',
+            'Deeds',
+            'Petitions',
+            'Complaints',
+            'Motions',
+            'Memoranda',
+            'Waivers & Releases',
+            'Power of Attorney',
+            'Notarial Documents',
+            'Corporate Documents',
+            'Employment Documents',
+            'Real Estate Documents',
+            'Other Documents',
+        ];
 
         return view('livewire.admin.template-management', [
             'templates' => $templates,

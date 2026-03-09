@@ -191,7 +191,25 @@ class CreateDocument extends Component
             ->get()
             ->groupBy('category');
 
-        $categories = \App\Models\DocumentCategory::active()->ordered()->get();
+        // Predefined categories - same as admin template management
+        $categories = [
+            'Contracts',
+            'Affidavits',
+            'Agreements',
+            'Legal Letters',
+            'Deeds',
+            'Petitions',
+            'Complaints',
+            'Motions',
+            'Memoranda',
+            'Waivers & Releases',
+            'Power of Attorney',
+            'Notarial Documents',
+            'Corporate Documents',
+            'Employment Documents',
+            'Real Estate Documents',
+            'Other Documents',
+        ];
 
         return view('livewire.lawyer.create-document', [
             'templates' => $templates,
