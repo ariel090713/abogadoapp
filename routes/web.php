@@ -146,6 +146,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureOnboardingComp
         Route::get('/newsletter', \App\Livewire\Admin\NewsletterBlast::class)->name('newsletter');
         Route::get('/email-list', \App\Livewire\Admin\EmailList::class)->name('email-list');
         Route::post('/upload-image', [\App\Http\Controllers\Admin\ImageUploadController::class, 'upload'])->name('upload-image');
+        Route::post('/tinymce/upload', [\App\Http\Controllers\TinyMCEImageController::class, 'upload'])->name('tinymce.upload');
         Route::get('/users', \App\Livewire\Admin\UserManagement::class)->name('users');
         Route::get('/lawyers', \App\Livewire\Admin\LawyerVerification::class)->name('lawyers');
         Route::get('/lawyer/{lawyer}/document/{type}', [\App\Http\Controllers\Admin\LawyerDocumentController::class, 'view'])->name('lawyer.document');

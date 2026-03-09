@@ -172,6 +172,12 @@
     let editor;
     
     document.addEventListener('DOMContentLoaded', function() {
+        // Wait for TinyMCE to be fully loaded
+        if (typeof tinymce === 'undefined') {
+            console.error('TinyMCE not loaded');
+            return;
+        }
+        
         tinymce.init({
             selector: '#tinymce-editor',
             height: 500,
@@ -183,26 +189,42 @@
             ],
             toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat | help',
             content_style: 'body { font-family:Arial,sans-serif; font-size:14px }',
-            images_upload_handler: function (blobInfo, success, failure) {
-                let formData = new FormData();
-                formData.append('file', blobInfo.blob(), blobInfo.filename());
-                
-                fetch('/admin/upload-image', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.location) {
-                        success(result.location);
-                    } else {
-                        failure('Upload failed');
-                    }
-                })
-                .catch(() => failure('Upload failed'));
+            images_upload_handler: function (blobInfo, progress) {
+                return new Promise(function(resolve, reject) {
+                    const formData = new FormData();
+                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+                    
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', '{{ route('admin.tinymce.upload') }}');
+                    xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
+                    
+                    xhr.upload.onprogress = function(e) {
+                        progress(e.loaded / e.total * 100);
+                    };
+                    
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            try {
+                                const result = JSON.parse(xhr.responseText);
+                                if (result.location) {
+                                    resolve(result.location);
+                                } else {
+                                    reject('Upload failed: ' + (result.error || 'Unknown error'));
+                                }
+                            } catch (e) {
+                                reject('Upload failed: Invalid response');
+                            }
+                        } else {
+                            reject('Upload failed: HTTP ' + xhr.status);
+                        }
+                    };
+                    
+                    xhr.onerror = function() {
+                        reject('Upload failed: Network error');
+                    };
+                    
+                    xhr.send(formData);
+                });
             },
             setup: function(ed) {
                 editor = ed;
