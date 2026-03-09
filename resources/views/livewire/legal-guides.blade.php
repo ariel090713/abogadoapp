@@ -1,6 +1,6 @@
 <div>
 <!-- Hero Section -->
-<section class="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white py-16 md:py-24">
+<section class="bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white py-16 md:py-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto">
                 <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium mb-6">
@@ -212,7 +212,7 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-16 md:py-24 bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white">
+    <section class="py-16 md:py-24 bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl md:text-4xl font-bold mb-4">Need Legal Advice?</h2>
             <p class="text-lg md:text-xl text-primary-100 mb-8">

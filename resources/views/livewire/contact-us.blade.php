@@ -1,15 +1,8 @@
 <div>
 <!-- Hero Section -->
-<section class="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white py-16 md:py-24">
+<section class="bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white py-16 md:py-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto">
-                <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium mb-6">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-                    </svg>
-                    <span>Get in Touch</span>
-                </div>
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">Contact Us</h1>
                 <p class="text-lg md:text-xl text-primary-100 leading-relaxed">
                     Have questions? We're here to help. Reach out to our team anytime
@@ -231,7 +224,7 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-16 md:py-24 bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white">
+    <section class="py-16 md:py-24 bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
             <p class="text-lg md:text-xl text-primary-100 mb-8">

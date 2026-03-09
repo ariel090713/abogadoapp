@@ -11,7 +11,17 @@ Route::get('/', function () {
 })->name('home');
 
 // Static Pages (Livewire Components)
-Route::get('/legal-guides', \App\Livewire\LegalGuides::class)->name('legal-guides');
+Route::get('/legal-guides', \App\Livewire\Resources\LegalGuidesIndex::class)->name('resources.legal-guides');
+Route::get('/legal-guides/{slug}', \App\Livewire\Resources\LegalGuideView::class)->name('resources.legal-guides.view');
+Route::get('/news', \App\Livewire\Resources\NewsIndex::class)->name('resources.news');
+Route::get('/news/{slug}', \App\Livewire\Resources\NewsView::class)->name('resources.news.view');
+Route::get('/blogs', \App\Livewire\Resources\BlogsIndex::class)->name('resources.blogs');
+Route::get('/blogs/{slug}', \App\Livewire\Resources\BlogView::class)->name('resources.blogs.view');
+Route::get('/events', \App\Livewire\Resources\EventsIndex::class)->name('resources.events');
+Route::get('/events/{slug}', \App\Livewire\Resources\EventView::class)->name('resources.events.view');
+Route::get('/galleries', \App\Livewire\Resources\GalleriesIndex::class)->name('resources.galleries');
+Route::get('/galleries/{slug}', \App\Livewire\Resources\GalleryView::class)->name('resources.galleries.view');
+Route::get('/downloadables', \App\Livewire\Resources\DownloadablesIndex::class)->name('resources.downloadables');
 Route::get('/about', \App\Livewire\AboutUs::class)->name('about');
 Route::get('/contact', \App\Livewire\ContactUs::class)->name('contact');
 
@@ -135,6 +145,8 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureOnboardingComp
         Route::get('/refunds', \App\Livewire\Admin\RefundManagement::class)->name('refunds');
         Route::get('/payouts', \App\Livewire\Admin\Payouts::class)->name('payouts');
         Route::get('/reports', \App\Livewire\Admin\Reports::class)->name('reports');
+        Route::get('/content', \App\Livewire\Admin\ContentManagement::class)->name('content');
+        Route::get('/specializations', \App\Livewire\Admin\SpecializationManagement::class)->name('specializations');
         Route::get('/settings', function () { return 'Admin Settings'; })->name('settings');
     });
 

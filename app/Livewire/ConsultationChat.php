@@ -330,7 +330,7 @@ class ConsultationChat extends Component
         }
     }
 
-    public function markMessagesAsRead(BroadcastingService $broadcasting = null)
+    public function markMessagesAsRead(?BroadcastingService $broadcasting = null)
     {
         $unreadMessages = $this->consultation->messages()
             ->where('sender_id', '!=', auth()->id())

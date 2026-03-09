@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-gradient-to-b from-gray-50 to-white">
     <!-- Header -->
-    <div class="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white py-8 md:py-12 lg:py-16">
+    <div class="bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white py-8 md:py-12 lg:py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">Find Your Lawyer</h1>
             <p class="text-base md:text-lg lg:text-xl text-primary-100">Connect with verified legal professionals in the Philippines</p>
@@ -73,7 +73,7 @@
                                                         wire:click="toggleSpecialization('{{ $spec->slug }}')"
                                                         {{ in_array($spec->slug, $specializations) ? 'checked' : '' }}
                                                         class="w-4 h-4 text-primary-600 focus:ring-primary-500 rounded">
-                                                    <span class="ml-3 text-sm font-semibold text-gray-900">{{ $spec->icon }} {{ $spec->name }}</span>
+                                                    <span class="ml-3 text-sm font-semibold text-gray-900">{{ $spec->name }}</span>
                                                 </label>
                                                 
                                                 @if($spec->children->count() > 0)

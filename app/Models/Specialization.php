@@ -17,6 +17,7 @@ class Specialization extends Model
         'slug',
         'description',
         'icon',
+        'image_url',
         'parent_id',
         'is_parent',
     ];

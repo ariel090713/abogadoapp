@@ -1,6 +1,6 @@
 <div>
 <!-- Hero Section -->
-<section class="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white py-16 md:py-24">
+<section class="bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white py-16 md:py-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto">
                 <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium mb-6">
@@ -43,30 +43,6 @@
                     <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Vision</h2>
                     <p class="text-lg text-gray-700 leading-relaxed">
                         To become the leading online legal consultation platform in the Philippines, where every Filipino can easily access quality legal advice and representation.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Our Story -->
-    <section class="py-16 md:py-24 bg-gray-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Story</h2>
-                <p class="text-lg text-gray-600">How AbogadoMo came to be</p>
-            </div>
-
-            <div class="prose prose-lg max-w-none">
-                <div class="bg-white rounded-2xl p-8 md:p-12 shadow-lg border border-gray-200">
-                    <p class="text-gray-700 leading-relaxed mb-6">
-                        AbogadoMo was founded with a simple yet powerful vision: to bridge the gap between Filipinos who need legal help and the lawyers who can provide it. We recognized that many people face barriers when seeking legal assistance—high costs, geographical limitations, and lack of information about where to start.
-                    </p>
-                    <p class="text-gray-700 leading-relaxed mb-6">
-                        Our platform was built to address these challenges by leveraging technology to make legal services more accessible, transparent, and affordable. We carefully vet every lawyer on our platform to ensure they are licensed members of the Integrated Bar of the Philippines (IBP) and maintain high professional standards.
-                    </p>
-                    <p class="text-gray-700 leading-relaxed">
-                        Today, AbogadoMo serves thousands of clients across the Philippines, connecting them with experienced lawyers for consultations, document preparation, and legal representation. We're proud to be part of the digital transformation of legal services in our country.
                     </p>
                 </div>
             </div>
@@ -118,7 +94,7 @@
     </section>
 
     <!-- Statistics -->
-    <section class="py-16 md:py-24 bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white">
+    <section class="py-16 md:py-24 bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Impact</h2>

@@ -22,12 +22,12 @@
             type="email" 
             wire:model="email"
             placeholder="Enter your email address" 
-            class="flex-1 px-6 py-4 rounded-xl text-white border-2 @error('email') border-white @else border-white @enderror focus:outline-none focus:ring-2"
+            class="flex-1 px-6 py-4 rounded-xl text-gray-900 bg-white border-2 @error('email') border-red-500 @else border-gray-300 @enderror focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             required
         >
         <button 
             type="submit" 
-            class="px-8 py-4 bg-accent-600 text-white rounded-xl font-semibold hover:bg-accent-700 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-8 py-4 bg-primary-700 text-white rounded-xl font-semibold hover:bg-primary-800 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             wire:loading.attr="disabled"
         >
             <span wire:loading.remove wire:target="subscribe">Subscribe</span>
@@ -36,6 +36,6 @@
     </form>
     
     @error('email')
-        <p class="text-red-300 text-sm mt-2 text-center">{{ $message }}</p>
+        <p class="text-red-600 text-sm mt-2 text-center">{{ $message }}</p>
     @enderror
 </div>
