@@ -451,7 +451,7 @@
         @endif
     </div>
     
-    <!-- AI Chat Script (inside main div to maintain single root element) -->
+    @push('scripts')
     <script>
         // AI Chat Functions (Global scope)
         window.conversation = [
@@ -636,4 +636,5 @@
             }
         };
     </script>
+    @endpush
 </div>
