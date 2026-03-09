@@ -317,12 +317,6 @@ Otherwise, just have a natural conversation to understand their needs better.";
             case 'rating':
                 $query->orderBy('rating', 'desc');
                 break;
-            case 'price_low':
-                $query->orderBy('rate_per_15min', 'asc');
-                break;
-            case 'price_high':
-                $query->orderBy('rate_per_15min', 'desc');
-                break;
             case 'experience':
                 $query->orderBy('years_experience', 'desc');
                 break;

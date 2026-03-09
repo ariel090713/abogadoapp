@@ -393,8 +393,6 @@
                     <!-- Sort -->
                     <select wire:model.live="sortBy" class="w-full sm:w-48 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                         <option value="rating">Highest Rated</option>
-                        <option value="price_low">Price: Low to High</option>
-                        <option value="price_high">Price: High to Low</option>
                         <option value="experience">Most Experienced</option>
                         <option value="reviews">Most Reviews</option>
                     </select>

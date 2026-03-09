@@ -44,7 +44,7 @@ class Profile extends Component
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $userId,
-            'phone' => 'required|regex:/^09[0-9]{9}$/',
+            'phone' => ['required', 'regex:/^(\+639|09)[0-9]{9}$/'],
             'province' => 'required|string',
             'city' => 'required|string',
             'new_profile_photo' => 'nullable|image|max:5120',
@@ -52,7 +52,7 @@ class Profile extends Component
     }
 
     protected $messages = [
-        'phone.regex' => 'Phone number must be in format: 09XXXXXXXXX',
+        'phone.regex' => 'Phone number must be in format: 09XXXXXXXXX or +639XXXXXXXXX',
         'name.required' => 'Full name is required',
         'email.required' => 'Email address is required',
         'email.email' => 'Please enter a valid email address',

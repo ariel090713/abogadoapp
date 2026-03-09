@@ -19,7 +19,7 @@ class ClientOnboarding extends Component
     public $totalSteps = 3; // Removed profile photo step
     
     protected $rules = [
-        'phone' => 'required|regex:/^9[0-9]{9}$/',
+        'phone' => 'required|regex:/^(\+639|09|9)[0-9]{9}$/',
         'province' => 'required|string',
         'city' => 'required|string',
         'languages' => 'required|array|min:1',
@@ -28,7 +28,8 @@ class ClientOnboarding extends Component
     public function mount()
     {
         $user = auth()->user();
-        $this->phone = $user->phone ? str_replace('+63', '', $user->phone) : '';
+        // Keep the phone format as stored in database for display
+        $this->phone = $user->phone ?? '';
         $this->province = $user->province ?? '';
         $this->city = $user->city ?? '';
         $this->languages = \App\Helpers\Languages::getDefault();
@@ -43,7 +44,7 @@ class ClientOnboarding extends Component
     {
         if ($this->step === 1) {
             $this->validate([
-                'phone' => 'required|regex:/^9[0-9]{9}$/',
+                'phone' => 'required|regex:/^(\+639|09|9)[0-9]{9}$/',
                 'province' => 'required|string',
                 'city' => 'required|string',
                 'languages' => 'required|array|min:1',
@@ -66,9 +67,18 @@ class ClientOnboarding extends Component
     {
         $user = auth()->user();
         
+        // Normalize phone number to +639 format
+        $normalizedPhone = $this->phone;
+        if (str_starts_with($normalizedPhone, '09')) {
+            $normalizedPhone = '+63' . substr($normalizedPhone, 1);
+        } elseif (str_starts_with($normalizedPhone, '9')) {
+            $normalizedPhone = '+63' . $normalizedPhone;
+        }
+        // If already starts with +639, keep as is
+        
         // Update basic info
         $user->update([
-            'phone' => '+63' . $this->phone,
+            'phone' => $normalizedPhone,
             'province' => $this->province,
             'city' => $this->city,
             'location' => $this->city . ', ' . $this->province,

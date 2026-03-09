@@ -59,7 +59,7 @@ class LawyerOnboarding extends Component
     protected function rules()
     {
         return [
-            'phone' => 'required|regex:/^9[0-9]{9}$/',
+            'phone' => 'required|regex:/^(\+639|09|9)[0-9]{9}$/',
             'province' => 'required|string',
             'city' => 'required|string',
             'ibpNumber' => 'required|string|min:4|max:20',
@@ -93,7 +93,7 @@ class LawyerOnboarding extends Component
             'ibpCard.max' => 'The IBP card file must not exceed 10MB.',
             'ibpCard.mimes' => 'The IBP card must be a PDF, JPG, JPEG, or PNG file.',
             'phone.required' => 'Phone number is required.',
-            'phone.regex' => 'Phone number must be a valid Philippine mobile number (e.g., 9171234567).',
+            'phone.regex' => 'Phone number must be a valid Philippine mobile number (e.g., 9171234567, 09171234567, or +639171234567).',
             'province.required' => 'Province is required.',
             'city.required' => 'City is required.',
             'ibpNumber.required' => 'IBP number is required.',
@@ -124,7 +124,8 @@ class LawyerOnboarding extends Component
     public function mount()
     {
         $user = auth()->user();
-        $this->phone = $user->phone ? str_replace('+63', '', $user->phone) : '';
+        // Keep the phone format as stored in database for display
+        $this->phone = $user->phone ?? '';
         $this->province = $user->province ?? '';
         $this->city = $user->city ?? '';
         $this->languages = \App\Helpers\Languages::getDefault();
@@ -237,7 +238,7 @@ class LawyerOnboarding extends Component
     {
         if ($this->step === 1) {
             $this->validate([
-                'phone' => 'required|regex:/^9[0-9]{9}$/',
+                'phone' => 'required|regex:/^(\+639|09|9)[0-9]{9}$/',
                 'province' => 'required|string',
                 'city' => 'required|string',
                 'languages' => 'required|array|min:1',
@@ -349,9 +350,18 @@ class LawyerOnboarding extends Component
                 'step' => $this->step,
             ]);
             
+            // Normalize phone number to +639 format
+            $normalizedPhone = $this->phone;
+            if (str_starts_with($normalizedPhone, '09')) {
+                $normalizedPhone = '+63' . substr($normalizedPhone, 1);
+            } elseif (str_starts_with($normalizedPhone, '9')) {
+                $normalizedPhone = '+63' . $normalizedPhone;
+            }
+            // If already starts with +639, keep as is
+            
             // Update user info
             $user->update([
-                'phone' => '+63' . $this->phone,
+                'phone' => $normalizedPhone,
                 'province' => $this->province,
                 'city' => $this->city,
                 'location' => $this->city . ', ' . $this->province,
