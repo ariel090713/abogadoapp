@@ -42,7 +42,7 @@ class Consultations extends Component
         if ($this->filter === 'pending') {
             $query->pending();
         } elseif ($this->filter === 'payment_pending') {
-            $query->whereIn('status', ['payment_pending', 'payment_processing']);
+            $query->whereIn('status', ['payment_pending', 'payment_processing', 'payment_failed']);
         } elseif ($this->filter === 'awaiting_quote') {
             $query->where('status', 'awaiting_quote_approval');
         } elseif ($this->filter === 'scheduled') {
@@ -77,7 +77,7 @@ class Consultations extends Component
         $counts = [
             'all' => Consultation::forLawyer(auth()->id())->count(),
             'pending' => Consultation::forLawyer(auth()->id())->pending()->count(),
-            'payment_pending' => Consultation::forLawyer(auth()->id())->whereIn('status', ['payment_pending', 'payment_processing'])->count(),
+            'payment_pending' => Consultation::forLawyer(auth()->id())->whereIn('status', ['payment_pending', 'payment_processing', 'payment_failed'])->count(),
             'scheduled' => Consultation::forLawyer(auth()->id())->where('status', 'scheduled')->count(),
             'in_progress' => Consultation::forLawyer(auth()->id())->where('status', 'in_progress')->count(),
             'completed' => Consultation::forLawyer(auth()->id())->completed()->count(),

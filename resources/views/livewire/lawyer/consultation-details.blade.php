@@ -57,6 +57,7 @@
                                     {{ $consultation->status === 'awaiting_quote_approval' ? 'bg-purple-100 text-purple-700' : '' }}
                                     {{ $consultation->status === 'payment_pending' ? 'bg-orange-100 text-orange-700' : '' }}
                                     {{ $consultation->status === 'payment_processing' ? 'bg-blue-100 text-blue-700 animate-pulse' : '' }}
+                                    {{ $consultation->status === 'payment_failed' ? 'bg-red-100 text-red-800' : '' }}
                                     {{ $consultation->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
                                     {{ $consultation->status === 'declined' ? 'bg-gray-100 text-gray-700' : '' }}
                                 ">
@@ -64,6 +65,8 @@
                                         Pending Client Approval
                                     @elseif($consultation->status === 'payment_processing')
                                         Payment Processing...
+                                    @elseif($consultation->status === 'payment_failed')
+                                        Payment Failed
                                     @else
                                         {{ ucfirst(str_replace('_', ' ', $consultation->status)) }}
                                     @endif

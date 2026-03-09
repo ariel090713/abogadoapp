@@ -45,7 +45,7 @@ class PaymentController extends Controller
         }
 
         // Check if consultation is in correct status
-        if (!in_array($consultation->status, ['accepted', 'payment_pending'])) {
+        if (!in_array($consultation->status, ['accepted', 'payment_pending', 'payment_failed'])) {
             return redirect()
                 ->route('client.consultations')
                 ->with('error', 'This consultation cannot be paid at this time.');
@@ -225,10 +225,13 @@ class PaymentController extends Controller
             return;
         }
 
-        // Try to find consultation first
-        $consultation = Consultation::where('payment_intent_id', $checkoutSessionId)->first();
+        // Try to find consultation first via transaction
+        $transaction = \App\Models\Transaction::where('paymongo_payment_intent_id', $checkoutSessionId)
+            ->whereNotNull('consultation_id')
+            ->first();
         
-        if ($consultation) {
+        if ($transaction && $transaction->consultation) {
+            $consultation = $transaction->consultation;
             // Handle consultation payment
             $this->handleConsultationPayment($consultation, $data);
             return;

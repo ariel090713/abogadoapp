@@ -58,6 +58,7 @@
                                     {{ $consultation->status === 'awaiting_quote_approval' ? 'bg-purple-100 text-purple-700' : '' }}
                                     {{ $consultation->status === 'payment_pending' ? 'bg-orange-100 text-orange-700' : '' }}
                                     {{ $consultation->status === 'payment_processing' ? 'bg-blue-100 text-blue-700 animate-pulse' : '' }}
+                                    {{ $consultation->status === 'payment_failed' ? 'bg-red-100 text-red-800' : '' }}
                                     {{ $consultation->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
                                     {{ $consultation->status === 'declined' ? 'bg-gray-100 text-gray-700' : '' }}
                                 ">
@@ -65,6 +66,8 @@
                                         Pending Your Approval
                                     @elseif($consultation->status === 'payment_processing')
                                         Payment Processing...
+                                    @elseif($consultation->status === 'payment_failed')
+                                        Payment Failed
                                     @else
                                         {{ ucfirst(str_replace('_', ' ', $consultation->status)) }}
                                     @endif
@@ -785,6 +788,28 @@
                     </div>
                 @endif
 
+                @if($consultation->status === 'payment_failed')
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-3">
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-medium text-red-800">Payment Failed</p>
+                                    <p class="text-xs text-red-700 mt-1">Your payment could not be processed. Please try again.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a 
+                            href="{{ route('payment.checkout', $consultation) }}"
+                            class="block w-full bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition text-center"
+                        >
+                            Retry Payment
+                        </a>
+                    </div>
+                @endif
+
                 <!-- Reschedule Button -->
                 @if(in_array($consultation->status, ['scheduled', 'payment_pending']))
                     <div class="mt-4 pt-4 border-t border-gray-200">
@@ -792,7 +817,7 @@
                     </div>
                 @endif
 
-                @if(in_array($consultation->status, ['pending', 'payment_pending', 'awaiting_quote_approval']))
+                @if(in_array($consultation->status, ['pending', 'payment_pending', 'payment_failed', 'awaiting_quote_approval']))
                     <div class="mt-4 pt-4 border-t border-gray-200">
                         <button 
                             wire:click="$set('showCancelModal', true)"
