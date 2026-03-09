@@ -519,7 +519,7 @@ class Consultation extends Model
         }
 
         // Cannot reschedule within 24 hours of consultation
-        if ($this->scheduled_at && $this->scheduled_at->diffInHours(now()) < 24) {
+        if ($this->scheduled_at && now()->diffInHours($this->scheduled_at, false) < 24) {
             return false;
         }
 

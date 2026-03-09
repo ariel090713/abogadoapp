@@ -618,7 +618,8 @@ class ConsultationDetails extends Component
         $this->availableSlots = $rescheduleService->getAvailableTimeSlots(
             $this->consultation->lawyer,
             \Carbon\Carbon::parse($value),
-            $this->consultation->duration
+            $this->consultation->duration,
+            $this->consultation->id  // Exclude current consultation from conflicts
         );
 
         $this->selectedSlot = null;
@@ -626,6 +627,13 @@ class ConsultationDetails extends Component
 
     public function requestReschedule()
     {
+        \Log::info('Reschedule request started', [
+            'consultation_id' => $this->consultation->id,
+            'selectedDate' => $this->selectedDate,
+            'selectedSlot' => $this->selectedSlot,
+            'rescheduleReason' => $this->rescheduleReason,
+        ]);
+
         $this->validate([
             'selectedDate' => 'required|date|after:today',
             'selectedSlot' => 'required',

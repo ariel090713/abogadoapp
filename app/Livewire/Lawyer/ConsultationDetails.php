@@ -645,7 +645,8 @@ class ConsultationDetails extends Component
         $this->availableSlots = $rescheduleService->getAvailableTimeSlots(
             $this->consultation->lawyer,
             \Carbon\Carbon::parse($value),
-            $this->consultation->duration
+            $this->consultation->duration,
+            $this->consultation->id  // Exclude current consultation from conflicts
         );
 
         $this->selectedSlot = null;

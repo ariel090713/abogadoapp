@@ -108,14 +108,6 @@
                             </div>
                         </div>
                     @endif
-                    
-                    <!-- Reschedule Info -->
-                    <x-reschedule-info :consultation="$consultation" />
-                    
-                    <!-- Reschedule Button -->
-                    <div class="flex justify-center pt-4">
-                        <x-reschedule-button :consultation="$consultation" />
-                    </div>
                 </div>
             </div>
 
@@ -294,6 +286,38 @@
             </div>
         @endif
     </div>
+
+@script
+<script>
+    // Auto-scroll to bottom when new messages arrive
+    function scrollToBottom() {
+        const container = document.getElementById('messages-container');
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
+    }
+
+    // Scroll on load
+    document.addEventListener('DOMContentLoaded', scrollToBottom);
+    
+    // Scroll when Livewire updates
+    Livewire.hook('morph.updated', ({ el, component }) => {
+        if (el.id === 'messages-container') {
+            scrollToBottom();
+        }
+    });
+
+    // Watch for new messages being added
+    if (document.getElementById('messages-container')) {
+        const observer = new MutationObserver(scrollToBottom);
+        observer.observe(document.getElementById('messages-container'), {
+            childList: true,
+            subtree: true
+        });
+    }
+</script>
+@endscript
+
 </div>
 
 <!-- Completion Modal (Lawyer Only) -->
@@ -713,7 +737,3 @@
     }
 </script>
 @endscript
-
-
-<!-- Reschedule Modals -->
-<x-reschedule-modal :consultation="$consultation" />

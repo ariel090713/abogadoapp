@@ -106,11 +106,17 @@ class BookConsultation extends Component
     public function updatedServiceType()
     {
         $this->duration = '';
+        $this->scheduledDate = '';
+        $this->scheduledTime = '';
+        $this->availableSlots = [];
         $this->calculateTotal();
     }
 
     public function updatedDuration()
     {
+        $this->scheduledDate = '';
+        $this->scheduledTime = '';
+        $this->availableSlots = [];
         $this->calculateTotal();
     }
     

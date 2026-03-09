@@ -39,11 +39,11 @@ class ConsultationRescheduleService
                 ];
             }
 
-            // Validate proposed schedule is at least 24 hours from now
-            if ($proposedSchedule->diffInHours(now()) < 24) {
+            // Validate proposed schedule is at least 2 hours from now (less restrictive for reschedule)
+            if ($proposedSchedule->diffInHours(now()) < 2) {
                 return [
                     'success' => false,
-                    'message' => 'Proposed schedule must be at least 24 hours from now.',
+                    'message' => 'Proposed schedule must be at least 2 hours from now.',
                 ];
             }
 
@@ -361,8 +361,8 @@ class ConsultationRescheduleService
             return 'There is already a pending reschedule request.';
         }
 
-        if ($consultation->scheduled_at && $consultation->scheduled_at->diffInHours(now()) < 24) {
-            return 'Cannot reschedule within 24 hours of the consultation.';
+        if ($consultation->scheduled_at && $consultation->scheduled_at->diffInHours(now()) < 2) {
+            return 'Cannot reschedule within 2 hours of the consultation.';
         }
 
         return 'Consultation cannot be rescheduled at this time.';
@@ -453,8 +453,15 @@ class ConsultationRescheduleService
     /**
      * Get available time slots for a specific date
      */
-    public function getAvailableTimeSlots(User $lawyer, Carbon $date, int $duration): array
+    public function getAvailableTimeSlots(User $lawyer, Carbon $date, int $duration, ?int $excludeConsultationId = null): array
     {
+        \Log::info('getAvailableTimeSlots called', [
+            'lawyer_id' => $lawyer->id,
+            'date' => $date->toDateString(),
+            'duration' => $duration,
+            'current_time' => now()->toDateTimeString(),
+        ]);
+
         $lawyerProfile = $lawyer->lawyerProfile;
 
         if (!$lawyerProfile || !$lawyerProfile->is_available) {
@@ -474,11 +481,16 @@ class ConsultationRescheduleService
             return [];
         }
 
-        // Get existing consultations for this day
-        $existingConsultations = Consultation::where('lawyer_id', $lawyer->id)
-            ->whereIn('status', ['scheduled', 'in_progress', 'payment_pending'])
-            ->whereDate('scheduled_at', $date->format('Y-m-d'))
-            ->get(['scheduled_at', 'duration']);
+        // Get existing consultations for this day (exclude the consultation being rescheduled)
+        $query = Consultation::where('lawyer_id', $lawyer->id)
+            ->whereIn('status', ['scheduled', 'in_progress', 'payment_pending', 'payment_processing', 'accepted'])
+            ->whereDate('scheduled_at', $date->format('Y-m-d'));
+        
+        if ($excludeConsultationId) {
+            $query->where('id', '!=', $excludeConsultationId);
+        }
+        
+        $existingConsultations = $query->get(['scheduled_at', 'duration']);
 
         // Generate time slots (30-minute intervals)
         $slots = [];
@@ -494,8 +506,8 @@ class ConsultationRescheduleService
                 continue;
             }
 
-            // Check if slot is at least 24 hours from now
-            if ($currentSlot->diffInHours(now()) < 24) {
+            // For reschedule, allow slots with shorter notice (minimum 2 hours instead of 24)
+            if ($currentSlot->lessThanOrEqualTo(now()->addHours(2))) {
                 $currentSlot->addMinutes(30);
                 continue;
             }
@@ -516,15 +528,29 @@ class ConsultationRescheduleService
             }
 
             if (!$hasConflict) {
+                \Log::info('Slot available', [
+                    'time' => $currentSlot->format('H:i'),
+                    'datetime' => $currentSlot->toDateTimeString(),
+                ]);
+                
                 $slots[] = [
                     'time' => $currentSlot->format('H:i'),
                     'display' => $currentSlot->format('g:i A'),
                     'datetime' => $currentSlot->toDateTimeString(),
                 ];
+            } else {
+                \Log::info('Slot has conflict', [
+                    'time' => $currentSlot->format('H:i'),
+                ]);
             }
 
             $currentSlot->addMinutes(30);
         }
+
+        \Log::info('getAvailableTimeSlots result', [
+            'total_slots' => count($slots),
+            'slots' => array_column($slots, 'display'),
+        ]);
 
         return $slots;
     }

@@ -143,16 +143,6 @@
                                 </div>
                                 @endif
                             </div>
-                            
-                            <!-- Reschedule Info -->
-                            <div class="mt-6">
-                                <x-reschedule-info :consultation="$consultation" />
-                            </div>
-                            
-                            <!-- Reschedule Button -->
-                            <div class="flex justify-center pt-4">
-                                <x-reschedule-button :consultation="$consultation" />
-                            </div>
                             </div>
                         </div>
                     </div>
@@ -655,11 +645,5 @@
         });
     </script>
 
-
 </div>
-
 </div>
-
-
-<!-- Reschedule Modals -->
-<x-reschedule-modal :consultation="$consultation" />
