@@ -683,7 +683,7 @@ class Consultation extends Model
     /**
      * Close the case
      */
-    public function closeCase(string $notes = null): bool
+    public function closeCase(?string $notes = null): bool
     {
         $mainCase = $this->getMainCase();
         
