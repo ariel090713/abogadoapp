@@ -9,11 +9,13 @@ use Illuminate\Support\Facades\Cache;
 class EmbeddingService
 {
     private string $apiKey;
-    private string $model = 'text-embedding-004'; // Latest Gemini embedding model
+    private string $model;
+    private string $apiVersion = 'v1beta';
 
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key');
+        $this->model = config('services.gemini.embedding_model', 'gemini-embedding-001');
     }
 
     /**
@@ -54,7 +56,7 @@ class EmbeddingService
     {
         try {
             $response = Http::timeout(30)
-                ->post("https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:embedContent?key={$this->apiKey}", [
+                ->post("https://generativelanguage.googleapis.com/{$this->apiVersion}/models/{$this->model}:embedContent?key={$this->apiKey}", [
                     'model' => "models/{$this->model}",
                     'content' => [
                         'parts' => [
@@ -103,7 +105,7 @@ class EmbeddingService
             }, $texts);
 
             $response = Http::timeout(60)
-                ->post("https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:batchEmbedContents?key={$this->apiKey}", [
+                ->post("https://generativelanguage.googleapis.com/{$this->apiVersion}/models/{$this->model}:batchEmbedContents?key={$this->apiKey}", [
                     'requests' => $requests,
                 ]);
 

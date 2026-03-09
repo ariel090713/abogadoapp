@@ -289,7 +289,7 @@ class AIKnowledgeBase extends Model
         $this->update([
             'chunks' => $chunks,
             'chunk_embeddings' => $embeddings,
-            'embedding_model' => 'text-embedding-004',
+            'embedding_model' => 'gemini-embedding-001',
             'chunk_size' => $chunkSize,
             'chunk_overlap' => $overlap,
             'content_hash' => $this->generateContentHash(),
