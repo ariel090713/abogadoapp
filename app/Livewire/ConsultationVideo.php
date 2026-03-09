@@ -27,6 +27,15 @@ class ConsultationVideo extends Component
     public $showCompleteModal = false;
     public $completionNotes = '';
     public $reviewedDocument;
+    
+    // Reschedule modal
+    public $showRescheduleModal = false;
+    public $selectedDate = null;
+    public $availableSlots = [];
+    public $selectedSlot = null;
+    public $rescheduleReason = '';
+    public $declineReason = '';
+    public $showDeclineModal = false;
 
     public function mount(Consultation $consultation)
     {
@@ -537,6 +546,184 @@ class ConsultationVideo extends Component
             ]);
 
             session()->flash('error', 'Failed to mark consultation as completed. Please try again.');
+        }
+    }
+
+    // ==========================================
+    // RESCHEDULE METHODS
+    // ==========================================
+
+    public function openRescheduleModal()
+    {
+        if (!$this->consultation->canBeRescheduled()) {
+            session()->flash('error', 'This consultation cannot be rescheduled at this time.');
+            return;
+        }
+
+        $this->showRescheduleModal = true;
+        $this->selectedDate = null;
+        $this->availableSlots = [];
+        $this->selectedSlot = null;
+        $this->rescheduleReason = '';
+    }
+
+    public function updatedSelectedDate($value)
+    {
+        if (!$value) {
+            $this->availableSlots = [];
+            return;
+        }
+
+        $rescheduleService = app(\App\Services\ConsultationRescheduleService::class);
+        
+        $this->availableSlots = $rescheduleService->getAvailableTimeSlots(
+            $this->consultation->lawyer,
+            \Carbon\Carbon::parse($value),
+            $this->consultation->duration
+        );
+
+        $this->selectedSlot = null;
+    }
+
+    public function requestReschedule()
+    {
+        $this->validate([
+            'selectedDate' => 'required|date|after:today',
+            'selectedSlot' => 'required',
+            'rescheduleReason' => 'required|string|min:10|max:500',
+        ], [
+            'selectedDate.required' => 'Please select a date.',
+            'selectedDate.after' => 'Date must be in the future.',
+            'selectedSlot.required' => 'Please select a time slot.',
+            'rescheduleReason.required' => 'Please provide a reason for rescheduling.',
+            'rescheduleReason.min' => 'Reason must be at least 10 characters.',
+        ]);
+
+        try {
+            $rescheduleService = app(\App\Services\ConsultationRescheduleService::class);
+            
+            $proposedSchedule = \Carbon\Carbon::parse($this->selectedDate . ' ' . $this->selectedSlot);
+            
+            $result = $rescheduleService->requestReschedule(
+                $this->consultation,
+                auth()->user(),
+                $proposedSchedule,
+                $this->rescheduleReason
+            );
+
+            if ($result['success']) {
+                session()->flash('success', $result['message']);
+                $this->showRescheduleModal = false;
+                $this->consultation->refresh();
+                $this->updateVideoStatus();
+            } else {
+                session()->flash('error', $result['message']);
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Reschedule request failed', [
+                'consultation_id' => $this->consultation->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            session()->flash('error', 'Failed to request reschedule. Please try again.');
+        }
+    }
+
+    public function approveReschedule()
+    {
+        try {
+            $rescheduleService = app(\App\Services\ConsultationRescheduleService::class);
+            
+            $result = $rescheduleService->approveReschedule(
+                $this->consultation,
+                auth()->user()
+            );
+
+            if ($result['success']) {
+                session()->flash('success', $result['message']);
+                $this->consultation->refresh();
+                $this->updateVideoStatus();
+            } else {
+                session()->flash('error', $result['message']);
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Reschedule approval failed', [
+                'consultation_id' => $this->consultation->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            session()->flash('error', 'Failed to approve reschedule. Please try again.');
+        }
+    }
+
+    public function openDeclineModal()
+    {
+        $this->showDeclineModal = true;
+        $this->declineReason = '';
+    }
+
+    public function declineReschedule()
+    {
+        $this->validate([
+            'declineReason' => 'required|string|min:10|max:500',
+        ], [
+            'declineReason.required' => 'Please provide a reason for declining.',
+            'declineReason.min' => 'Reason must be at least 10 characters.',
+        ]);
+
+        try {
+            $rescheduleService = app(\App\Services\ConsultationRescheduleService::class);
+            
+            $result = $rescheduleService->declineReschedule(
+                $this->consultation,
+                auth()->user(),
+                $this->declineReason
+            );
+
+            if ($result['success']) {
+                session()->flash('success', $result['message']);
+                $this->showDeclineModal = false;
+                $this->consultation->refresh();
+            } else {
+                session()->flash('error', $result['message']);
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Reschedule decline failed', [
+                'consultation_id' => $this->consultation->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            session()->flash('error', 'Failed to decline reschedule. Please try again.');
+        }
+    }
+
+    public function cancelRescheduleRequest()
+    {
+        try {
+            $rescheduleService = app(\App\Services\ConsultationRescheduleService::class);
+            
+            $result = $rescheduleService->cancelRescheduleRequest(
+                $this->consultation,
+                auth()->user()
+            );
+
+            if ($result['success']) {
+                session()->flash('success', $result['message']);
+                $this->consultation->refresh();
+            } else {
+                session()->flash('error', $result['message']);
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Reschedule cancellation failed', [
+                'consultation_id' => $this->consultation->id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            session()->flash('error', 'Failed to cancel reschedule request. Please try again.');
         }
     }
 

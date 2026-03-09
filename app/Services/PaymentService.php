@@ -245,7 +245,13 @@ class PaymentService
     /**
      * Process successful payment
      */
-    public function processSuccessfulPayment(Consultation $consultation, string $paymentIntentId, string $paymentMethod): Transaction
+    public function processSuccessfulPayment(
+        Consultation $consultation, 
+        string $paymentIntentId, 
+        string $paymentMethod,
+        ?string $paymentId = null,
+        ?string $paymentMethodId = null
+    ): Transaction
     {
         // Calculate platform fee and lawyer payout
         $platformFee = 0; // Platform fee set to 0
@@ -258,11 +264,21 @@ class PaymentService
         
         if ($transaction) {
             // Update existing pending transaction
-            $transaction->update([
+            $updateData = [
                 'status' => 'completed',
                 'payment_method' => $paymentMethod,
                 'processed_at' => now(),
-            ]);
+            ];
+            
+            // Only update payment_id and payment_method_id if provided and not already set
+            if ($paymentId && !$transaction->paymongo_payment_id) {
+                $updateData['paymongo_payment_id'] = $paymentId;
+            }
+            if ($paymentMethodId && !$transaction->paymongo_payment_method_id) {
+                $updateData['paymongo_payment_method_id'] = $paymentMethodId;
+            }
+            
+            $transaction->update($updateData);
         } else {
             // Fallback: Create transaction if not exists (shouldn't happen)
             $transaction = Transaction::create([
@@ -276,6 +292,8 @@ class PaymentService
                 'status' => 'completed',
                 'payment_method' => $paymentMethod,
                 'paymongo_payment_intent_id' => $paymentIntentId,
+                'paymongo_payment_id' => $paymentId,
+                'paymongo_payment_method_id' => $paymentMethodId,
                 'processed_at' => now(),
             ]);
         }
@@ -317,6 +335,8 @@ class PaymentService
             'amount' => $consultation->total_amount,
             'consultation_type' => $consultation->consultation_type,
             'status' => $status,
+            'payment_id' => $paymentId,
+            'payment_method_id' => $paymentMethodId,
         ]);
 
         return $transaction;

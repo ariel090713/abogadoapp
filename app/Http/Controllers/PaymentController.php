@@ -323,7 +323,9 @@ class PaymentController extends Controller
                 $this->paymentService->processSuccessfulPayment(
                     $consultation,
                     $checkoutSessionId,
-                    $paymentMethod
+                    $paymentMethod,
+                    $paymentId,
+                    $paymentMethodId
                 );
                 
                 Log::info('Consultation payment processed via webhook', [
