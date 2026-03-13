@@ -14,15 +14,28 @@ class RequestDocument extends Component
     public $clientNotes = '';
     public $agreedToTerms = false;
 
+    /**
+     * Get decoded form fields
+     */
+    public function getFormFieldsProperty()
+    {
+        if (is_string($this->document->form_fields)) {
+            return json_decode($this->document->form_fields, true) ?? [];
+        }
+        return $this->document->form_fields ?? [];
+    }
+
     public function mount($id)
     {
         $this->document = LawyerDocumentService::with(['lawyer.lawyerProfile', 'template'])
             ->where('is_active', true)
             ->findOrFail($id);
 
-        // Initialize form data
-        foreach ($this->document->form_fields['fields'] as $field) {
-            $this->formData[$field['id']] = '';
+        // Initialize form data using computed property
+        if (!empty($this->formFields) && isset($this->formFields['fields'])) {
+            foreach ($this->formFields['fields'] as $field) {
+                $this->formData[$field['id']] = '';
+            }
         }
     }
 
@@ -34,33 +47,36 @@ class RequestDocument extends Component
             'agreedToTerms' => 'accepted',
         ];
 
-        foreach ($this->document->form_fields['fields'] as $field) {
-            $fieldRules = [];
-            
-            if ($field['required']) {
-                $fieldRules[] = 'required';
-            } else {
-                $fieldRules[] = 'nullable';
-            }
+        // Use computed property for form fields
+        if (!empty($this->formFields) && isset($this->formFields['fields'])) {
+            foreach ($this->formFields['fields'] as $field) {
+                $fieldRules = [];
+                
+                if ($field['required']) {
+                    $fieldRules[] = 'required';
+                } else {
+                    $fieldRules[] = 'nullable';
+                }
 
-            // Add type-specific validation
-            switch ($field['type']) {
-                case 'number':
-                    $fieldRules[] = 'numeric';
-                    if (isset($field['min'])) $fieldRules[] = 'min:' . $field['min'];
-                    if (isset($field['max'])) $fieldRules[] = 'max:' . $field['max'];
-                    break;
-                case 'date':
-                    $fieldRules[] = 'date';
-                    break;
-                case 'textarea':
-                case 'text':
-                    $fieldRules[] = 'string';
-                    $fieldRules[] = 'max:5000';
-                    break;
-            }
+                // Add type-specific validation
+                switch ($field['type']) {
+                    case 'number':
+                        $fieldRules[] = 'numeric';
+                        if (isset($field['min'])) $fieldRules[] = 'min:' . $field['min'];
+                        if (isset($field['max'])) $fieldRules[] = 'max:' . $field['max'];
+                        break;
+                    case 'date':
+                        $fieldRules[] = 'date';
+                        break;
+                    case 'textarea':
+                    case 'text':
+                        $fieldRules[] = 'string';
+                        $fieldRules[] = 'max:5000';
+                        break;
+                }
 
-            $rules['formData.' . $field['id']] = implode('|', $fieldRules);
+                $rules['formData.' . $field['id']] = implode('|', $fieldRules);
+            }
         }
 
         $this->validate($rules);

@@ -378,6 +378,54 @@
                                     </div>
                                 </div>
                             @endif
+                            
+                            @if($this->documentServices->count() > 0)
+                                <div class="pb-6 border-b border-gray-100 last:border-0 last:pb-0">
+                                    <div class="flex items-center gap-2 mb-4">
+                                        <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="font-bold text-gray-900">Document Drafting</span>
+                                    </div>
+                                    <div class="space-y-2">
+                                        @foreach($this->documentServices->take(5) as $service)
+                                            <a href="{{ route('documents.request', $service->id) }}" 
+                                               class="block p-3 bg-gray-50 rounded-lg hover:bg-purple-50 hover:border-purple-200 border border-transparent transition cursor-pointer">
+                                                <div class="flex items-start justify-between gap-2">
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="font-medium text-gray-900 text-sm truncate">{{ $service->template->name }}</div>
+                                                        @if($service->description)
+                                                            <div class="text-xs text-gray-500 mt-0.5 line-clamp-2">{{ $service->description }}</div>
+                                                        @endif
+                                                        @if($service->estimated_completion_days)
+                                                            <div class="text-xs text-gray-600 mt-1">
+                                                                <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                </svg>
+                                                                {{ $service->estimated_completion_days }} {{ $service->estimated_completion_days == 1 ? 'day' : 'days' }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                    <div class="text-right flex-shrink-0">
+                                                        <div class="font-bold text-purple-700 text-sm whitespace-nowrap">₱{{ number_format($service->price, 0) }}</div>
+                                                        <div class="text-xs text-purple-600 mt-1">Request →</div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        @endforeach
+                                        @if($this->documentServices->count() > 5)
+                                            <div class="text-center pt-2">
+                                                <a href="{{ route('documents.browse') }}?lawyer={{ $lawyer->username }}" 
+                                                   class="text-sm text-primary-600 hover:text-primary-700 font-medium">
+                                                    View all {{ $this->documentServices->count() }} documents →
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 

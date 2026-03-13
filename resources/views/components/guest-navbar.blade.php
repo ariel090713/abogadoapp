@@ -1,4 +1,4 @@
-<nav class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50" x-data="{ mobileMenuOpen: false, documentsOpen: false }">
+<nav class="bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm sticky top-0 z-50 transition-all duration-300" x-data="{ mobileMenuOpen: false, documentsOpen: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16 md:h-20">
             <!-- Logo -->

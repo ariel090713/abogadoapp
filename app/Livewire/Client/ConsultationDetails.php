@@ -627,20 +627,12 @@ class ConsultationDetails extends Component
 
     public function requestReschedule()
     {
-        \Log::info('Reschedule request started', [
-            'consultation_id' => $this->consultation->id,
-            'selectedDate' => $this->selectedDate,
-            'selectedSlot' => $this->selectedSlot,
-            'rescheduleReason' => $this->rescheduleReason,
-        ]);
-
         $this->validate([
-            'selectedDate' => 'required|date|after:today',
+            'selectedDate' => 'required|date',
             'selectedSlot' => 'required',
             'rescheduleReason' => 'required|string|min:10|max:500',
         ], [
             'selectedDate.required' => 'Please select a date.',
-            'selectedDate.after' => 'Date must be in the future.',
             'selectedSlot.required' => 'Please select a time slot.',
             'rescheduleReason.required' => 'Please provide a reason for rescheduling.',
             'rescheduleReason.min' => 'Reason must be at least 10 characters.',

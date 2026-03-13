@@ -20,8 +20,8 @@
     <section class="relative bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white py-16 md:py-24 lg:py-32 overflow-hidden">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
-            <img src="https://lawyerstorage-public.s3.ap-southeast-2.amazonaws.com/abogadomoattybg.png" alt="Background" class="w-full h-full object-cover scale-110 opacity-30">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary-700/70 via-primary-800/70 to-accent-700/70"></div>
+            <img src="https://lawyerstorage-public.s3.ap-southeast-2.amazonaws.com/abogadomoattybg.png" alt="Background" class="w-full h-full object-cover scale-110 opacity-[0.15]">
+            <div class="absolute inset-0 bg-gradient-to-br from-primary-700/60 via-primary-800/60 to-accent-700/60"></div>
         </div>
         
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -490,39 +490,47 @@
                 <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Multiple Payment Options</h2>
                 <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Pay securely with your preferred method</p>
             </div>
-            <div class="flex flex-wrap items-center justify-center gap-8 md:gap-12">
-                <!-- PayMongo -->
-                <div class="flex items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-200 hover:border-primary-300 transition">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-primary-700 mb-1">PayMongo</div>
-                        <div class="text-sm text-gray-600">Secure Payment Gateway</div>
-                    </div>
-                </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
                 <!-- GCash -->
-                <div class="flex items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-200 hover:border-primary-300 transition">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-600 mb-1">GCash</div>
-                        <div class="text-sm text-gray-600">E-Wallet</div>
-                    </div>
+                <div class="flex items-center justify-center p-8 bg-white rounded-2xl border-2 border-gray-200 hover:border-blue-400 hover:shadow-lg transition group">
+                    <img src="https://lawyerstorage-public.s3.ap-southeast-2.amazonaws.com/gcash.png" 
+                         alt="GCash" 
+                         class="h-10 w-auto object-contain">
                 </div>
+
                 <!-- Maya -->
-                <div class="flex items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-200 hover:border-primary-300 transition">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-green-600 mb-1">Maya</div>
-                        <div class="text-sm text-gray-600">Digital Payment</div>
-                    </div>
+                <div class="flex items-center justify-center p-8 bg-white rounded-2xl border-2 border-gray-200 hover:border-green-400 hover:shadow-lg transition group">
+                    <img src="https://lawyerstorage-public.s3.ap-southeast-2.amazonaws.com/maya.jpg" 
+                         alt="Maya" 
+                         class="h-10 w-auto object-contain">
                 </div>
-                <!-- Credit/Debit Card -->
-                <div class="flex items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-200 hover:border-primary-300 transition">
-                    <div class="text-center">
-                        <div class="flex items-center gap-2 mb-1">
-                            <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
-                            </svg>
-                            <span class="text-xl font-bold text-gray-900">Cards</span>
-                        </div>
-                        <div class="text-sm text-gray-600">Visa, Mastercard</div>
-                    </div>
+
+                <!-- Visa -->
+                <div class="flex items-center justify-center p-8 bg-white rounded-2xl border-2 border-gray-200 hover:border-blue-600 hover:shadow-lg transition group">
+                    <img src="https://lawyerstorage-public.s3.ap-southeast-2.amazonaws.com/visa.png" 
+                         alt="Visa" 
+                         class="h-8 w-auto object-contain">
+                </div>
+
+                <!-- Mastercard -->
+                <div class="flex items-center justify-center p-8 bg-white rounded-2xl border-2 border-gray-200 hover:border-red-500 hover:shadow-lg transition group">
+                    <img src="https://lawyerstorage-public.s3.ap-southeast-2.amazonaws.com/mastercard.webp" 
+                         alt="Mastercard" 
+                         class="h-8 w-auto object-contain">
+                </div>
+            </div>
+
+            <!-- Powered by PayMongo -->
+            <div class="text-center mt-12">
+                <p class="text-sm text-gray-500 mb-3">Powered by</p>
+                <div class="inline-flex items-center gap-3 px-8 py-4 bg-gray-50 rounded-xl border border-gray-200">
+                    <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="100" height="100" rx="20" fill="#1E3A8A"/>
+                        <path d="M50 20C33.43 20 20 33.43 20 50C20 66.57 33.43 80 50 80C66.57 80 80 66.57 80 50C80 33.43 66.57 20 50 20ZM50 72C37.85 72 28 62.15 28 50C28 37.85 37.85 28 50 28C62.15 28 72 37.85 72 50C72 62.15 62.15 72 50 72Z" fill="white"/>
+                        <path d="M50 38C43.37 38 38 43.37 38 50C38 56.63 43.37 62 50 62C56.63 62 62 56.63 62 50C62 43.37 56.63 38 50 38ZM54 51H51V54C51 54.55 50.55 55 50 55C49.45 55 49 54.55 49 54V51H46C45.45 51 45 50.55 45 50C45 49.45 45.45 49 46 49H49V46C49 45.45 49.45 45 50 45C50.55 45 51 45.45 51 46V49H54C54.55 49 55 49.45 55 50C55 50.55 54.55 51 54 51Z" fill="white"/>
+                    </svg>
+                    <span class="text-xl font-bold text-gray-900">PayMongo</span>
+                    <span class="text-xs text-gray-500 ml-2 hidden sm:inline">Secure Payment Gateway</span>
                 </div>
             </div>
         </div>
@@ -786,6 +794,27 @@
             </div>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <div x-data="{ show: false }" 
+         x-on:scroll.window="show = window.pageYOffset >= 300" 
+         x-show="show" 
+         x-transition:enter="transition ease-out duration-300 transform" 
+         x-transition:enter-start="opacity-0 translate-y-8" 
+         x-transition:enter-end="opacity-100 translate-y-0" 
+         x-transition:leave="transition ease-in duration-300 transform" 
+         x-transition:leave-start="opacity-100 translate-y-0" 
+         x-transition:leave-end="opacity-0 translate-y-8" 
+         class="fixed bottom-6 right-6 z-50">
+        <button @click="window.scrollTo({top: 0, behavior: 'smooth'})" 
+                class="bg-primary-700 hover:bg-primary-800 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group"
+                aria-label="Back to top">
+            <svg class="w-6 h-6 transform group-hover:-translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+            </svg>
+        </button>
+    </div>
+
     @livewireScripts
 </body>
 </html>

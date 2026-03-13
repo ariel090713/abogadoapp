@@ -949,9 +949,6 @@
             </div>
         </div>
     </div>
-</div>
-
-
 
 <!-- Cancel Consultation Modal -->
 @if($showCancelModal)
@@ -1334,6 +1331,7 @@
             </button>
             <button 
                 wire:click="requestReschedule"
+                type="button"
                 wire:loading.attr="disabled"
                 wire:loading.class="opacity-50 cursor-not-allowed"
                 class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700"

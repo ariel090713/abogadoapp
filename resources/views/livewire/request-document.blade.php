@@ -86,7 +86,8 @@
                     </span>
                 </div>
 
-                @foreach($document->form_fields['fields'] as $field)
+                @if(!empty($this->formFields) && isset($this->formFields['fields']))
+                    @foreach($this->formFields['fields'] as $field)
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             {{ $field['label'] }}
@@ -137,7 +138,12 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p> 
                         @enderror
                     </div>
-                @endforeach
+                    @endforeach
+                @else
+                    <div class="text-center py-8 text-gray-500">
+                        <p>No form fields configured for this document.</p>
+                    </div>
+                @endif
 
                 <!-- Client Notes -->
                 <div>

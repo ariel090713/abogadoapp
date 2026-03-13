@@ -143,6 +143,9 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureOnboardingComp
     // Admin Routes
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/dashboard', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
+        Route::get('/profile', \App\Livewire\Admin\Profile::class)->name('profile');
+        Route::get('/profile/security', \App\Livewire\Admin\ProfileSecurity::class)->name('profile.security');
+        Route::get('/profile/notifications', \App\Livewire\Admin\ProfileNotifications::class)->name('profile.notifications');
         Route::get('/newsletter', \App\Livewire\Admin\NewsletterBlast::class)->name('newsletter');
         Route::get('/email-list', \App\Livewire\Admin\EmailList::class)->name('email-list');
         Route::post('/upload-image', [\App\Http\Controllers\Admin\ImageUploadController::class, 'upload'])->name('upload-image');

@@ -2,14 +2,14 @@
 @if($viewMode === 'grid')
     <!-- Grid View -->
     <a href="{{ route('lawyers.show', $lawyer->username) }}" class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
-        <div class="p-6 flex flex-col h-full">
+        <div class="p-4 sm:p-5 flex flex-col h-full">
             <!-- Profile Photo & Verified Badge -->
-            <div class="flex items-start justify-between mb-4">
+            <div class="flex items-start justify-between mb-3">
                 <div class="flex items-center gap-3">
                     @if($lawyer->user->profile_photo)
-                        <img src="{{ $lawyer->user->profile_photo }}" alt="{{ $lawyer->user->name }}" class="w-16 h-16 rounded-xl object-cover">
+                        <img src="{{ $lawyer->user->profile_photo }}" alt="{{ $lawyer->user->name }}" class="w-14 h-14 rounded-xl object-cover">
                     @else
-                        <div class="w-16 h-16 rounded-xl bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-xl">
+                        <div class="w-14 h-14 rounded-xl bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-lg">
                             {{ $lawyer->user->initials() }}
                         </div>
                     @endif
@@ -49,17 +49,17 @@
             @endif
 
             <!-- Specializations -->
-            <div class="flex flex-wrap gap-2 mb-3">
+            <div class="flex flex-wrap gap-1.5 mb-2">
                 @foreach($lawyer->specializations->take(2) as $spec)
-                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">{{ $spec->name }}</span>
+                    <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">{{ $spec->name }}</span>
                 @endforeach
                 @if($lawyer->specializations->count() > 2)
-                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">+{{ $lawyer->specializations->count() - 2 }}</span>
+                    <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">+{{ $lawyer->specializations->count() - 2 }}</span>
                 @endif
             </div>
 
             <!-- Bio Preview -->
-            <p class="text-sm text-gray-600 line-clamp-2 mb-4">{{ $lawyer->bio }}</p>
+            <p class="text-xs text-gray-600 line-clamp-2 mb-3">{{ $lawyer->bio }}</p>
 
             <!-- Spacer to push footer to bottom -->
             <div class="flex-grow"></div>
@@ -96,12 +96,12 @@
 @else
     <!-- List View -->
     <a href="{{ route('lawyers.show', $lawyer->username) }}" class="block bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
-        <div class="p-6 flex items-center gap-6">
+        <div class="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
             <!-- Profile Photo -->
             @if($lawyer->user->profile_photo)
-                <img src="{{ $lawyer->user->profile_photo }}" alt="{{ $lawyer->user->name }}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0">
+                <img src="{{ $lawyer->user->profile_photo }}" alt="{{ $lawyer->user->name }}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover flex-shrink-0">
             @else
-                <div class="w-20 h-20 rounded-xl bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-2xl flex-shrink-0">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-xl sm:text-2xl flex-shrink-0">
                     {{ $lawyer->user->initials() }}
                 </div>
             @endif
@@ -144,7 +144,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="text-right">
+                    <div class="mt-4 sm:mt-0 sm:text-right w-full sm:w-auto border-t sm:border-t-0 border-gray-100 pt-3 sm:pt-0">
                         <div class="space-y-1">
                             <span class="text-xs text-gray-500 block mb-2">Available Services</span>
                             
@@ -173,17 +173,17 @@
                 </div>
 
                 <!-- Specializations -->
-                <div class="flex flex-wrap gap-2 mb-3">
+                <div class="flex flex-wrap gap-1.5 mb-2">
                     @foreach($lawyer->specializations->take(3) as $spec)
-                        <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">{{ $spec->name }}</span>
+                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">{{ $spec->name }}</span>
                     @endforeach
                     @if($lawyer->specializations->count() > 3)
-                        <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">+{{ $lawyer->specializations->count() - 3 }}</span>
+                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">+{{ $lawyer->specializations->count() - 3 }}</span>
                     @endif
                 </div>
 
                 <!-- Bio -->
-                <p class="text-sm text-gray-600 line-clamp-2">{{ $lawyer->bio }}</p>
+                <p class="text-xs sm:text-sm text-gray-600 line-clamp-2">{{ $lawyer->bio }}</p>
             </div>
 
         </div>
