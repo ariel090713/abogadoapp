@@ -8,7 +8,6 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
-    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -55,50 +54,133 @@
     </section>
 
     <!-- How It Works -->
-    <section class="py-16 md:py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold mb-4">SIMPLE PROCESS</span>
-                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">How It Works</h2>
+    <section class="py-16 md:py-24 bg-white relative overflow-hidden">
+        <!-- Abstract background elements -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+            <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-primary-50/60 rounded-full blur-3xl"></div>
+            <div class="absolute top-[60%] -right-[10%] w-[40%] h-[40%] bg-accent-50/60 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 md:mb-20">
+                <span class="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-full text-sm font-semibold mb-6 border border-primary-100 tracking-wider shadow-sm transform hover:scale-105 transition duration-300">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    SIMPLE PROCESS
+                </span>
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">How It Works</h2>
                 <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Get legal help in three simple steps</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                <!-- Connection Lines -->
-                <div class="hidden md:block absolute top-20 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-primary-200 via-primary-300 to-primary-200"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative mt-12">
+                <!-- Connection Line (Desktop Only) -->
+                <div class="hidden md:block absolute top-[5.5rem] left-[12%] right-[12%] border-t-2 border-dashed border-primary-200 z-0 opacity-70"></div>
                 
-                <div class="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition text-center group border border-gray-100">
-                    <div class="w-20 h-20 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-2xl flex items-center justify-center text-3xl font-bold mx-auto mb-6 shadow-lg group-hover:scale-110 transition">1</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Find Your Lawyer</h3>
-                    <p class="text-base text-gray-600 leading-relaxed">Search and filter lawyers by practice area, location, rating, and price</p>
+                <!-- Step 1 -->
+                <div class="relative bg-white rounded-3xl p-6 hover:shadow-[0_20px_40px_-15px_rgba(var(--color-primary-400),0.2)] transition-all duration-500 text-center group border border-gray-100 transform hover:-translate-y-2 z-10 md:mt-6">
+                    <div class="absolute inset-0 bg-gradient-to-b from-primary-50/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="relative w-20 h-20 mx-auto mb-6">
+                        <!-- Tilted shadow layer -->
+                        <div class="absolute inset-0 bg-primary-100 rounded-2xl rotate-6 group-hover:rotate-12 transition-transform duration-500 opacity-60"></div>
+                        <!-- Main block -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-2xl flex items-center justify-center text-3xl font-bold shadow-lg transform group-hover:-translate-y-1 transition duration-500">
+                            1
+                        </div>
+                        <!-- Icon Badge -->
+                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-gray-50 z-20">
+                            <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" class="animate-pulse" />
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-700 transition-colors duration-300">Ask AI</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed relative z-10">Describe your case to our Smart AI and let it instantly match you with the right lawyer.</p>
                 </div>
                 
-                <div class="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition text-center group border border-gray-100">
-                    <div class="w-20 h-20 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-2xl flex items-center justify-center text-3xl font-bold mx-auto mb-6 shadow-lg group-hover:scale-110 transition">2</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Book Consultation</h3>
-                    <p class="text-base text-gray-600 leading-relaxed">Choose a time slot and pay securely online through multiple payment options</p>
+                <!-- Step 2 -->
+                <div class="relative bg-white rounded-3xl p-6 hover:shadow-[0_20px_40px_-15px_rgba(var(--color-primary-400),0.2)] transition-all duration-500 text-center group border border-gray-100 transform hover:-translate-y-2 z-10">
+                    <div class="absolute inset-0 bg-gradient-to-b from-primary-50/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="relative w-20 h-20 mx-auto mb-6">
+                        <!-- Tilted shadow layer -->
+                        <div class="absolute inset-0 bg-primary-100 rounded-2xl -rotate-6 group-hover:-rotate-12 transition-transform duration-500 opacity-60"></div>
+                        <!-- Main block -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-2xl flex items-center justify-center text-3xl font-bold shadow-lg transform group-hover:-translate-y-1 transition duration-500">
+                            Or
+                        </div>
+                        <!-- Icon Badge -->
+                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-gray-50 z-20">
+                            <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-700 transition-colors duration-300">Browse Directly</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed relative z-10">Prefer to explore? Search and filter lawyers by practice area, location, or price manually.</p>
                 </div>
                 
-                <div class="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition text-center group border border-gray-100">
-                    <div class="w-20 h-20 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-2xl flex items-center justify-center text-3xl font-bold mx-auto mb-6 shadow-lg group-hover:scale-110 transition">3</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Get Legal Advice</h3>
-                    <p class="text-base text-gray-600 leading-relaxed">Meet your lawyer via video call, chat, or document review</p>
+                <!-- Step 3 -->
+                <div class="relative bg-white rounded-3xl p-6 hover:shadow-[0_20px_40px_-15px_rgba(var(--color-primary-400),0.2)] transition-all duration-500 text-center group border border-gray-100 transform hover:-translate-y-2 z-10 md:mt-6">
+                     <div class="absolute inset-0 bg-gradient-to-b from-primary-50/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                     <div class="relative w-20 h-20 mx-auto mb-6">
+                        <!-- Tilted shadow layer -->
+                        <div class="absolute inset-0 bg-primary-100 rounded-2xl rotate-6 group-hover:rotate-12 transition-transform duration-500 opacity-60"></div>
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-2xl flex items-center justify-center text-3xl font-bold shadow-lg transform group-hover:-translate-y-1 transition duration-500">
+                            2
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-gray-50 z-20">
+                            <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-700 transition-colors duration-300">Book Consultation</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed relative z-10">Choose an available time slot and pay securely online through multiple payment options.</p>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="relative bg-white rounded-3xl p-6 hover:shadow-[0_20px_40px_-15px_rgba(var(--color-primary-400),0.2)] transition-all duration-500 text-center group border border-gray-100 transform hover:-translate-y-2 z-10">
+                     <div class="absolute inset-0 bg-gradient-to-b from-primary-50/50 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                     <div class="relative w-20 h-20 mx-auto mb-6">
+                        <!-- Tilted shadow layer -->
+                        <div class="absolute inset-0 bg-primary-100 rounded-2xl -rotate-6 group-hover:-rotate-12 transition-transform duration-500 opacity-60"></div>
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-2xl flex items-center justify-center text-3xl font-bold shadow-lg transform group-hover:-translate-y-1 transition duration-500">
+                            3
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-gray-50 z-20">
+                            <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-700 transition-colors duration-300">Get Legal Advice</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed relative z-10">Meet your chosen lawyer via secure video call, chat, or thorough document review.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Practice Areas -->
-    <section class="py-16 md:py-24 bg-gray-50" x-data="{ 
+    <section class="py-16 md:py-24 bg-gray-50 relative overflow-hidden" :class="{ 'z-[60]': expandedSpec }" x-data="{ 
         expandedSpec: null, 
         selectedChild: null,
+        init() {
+            this.$watch('expandedSpec', val => {
+                if (val) document.body.style.overflow = 'hidden';
+                else document.body.style.overflow = '';
+            });
+        },
         toggleSpec(id, index) {
             if (this.expandedSpec === id) {
                 this.expandedSpec = null;
-                this.selectedChild = null;
             } else {
                 this.expandedSpec = id;
                 this.selectedChild = null;
             }
+        },
+        closeModal() {
+            this.expandedSpec = null;
         },
         selectChild(child) {
             if (this.selectedChild && this.selectedChild.id === child.id) {
@@ -108,11 +190,19 @@
             }
         }
     }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Decorative Background -->
+        <div class="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#1E3A8A 2px, transparent 2px); background-size: 32px 32px;"></div>
+
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16">
-                <span class="inline-block px-4 py-2 bg-accent-100 text-accent-700 rounded-full text-sm font-semibold mb-4">EXPERTISE</span>
-                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Practice Areas</h2>
-                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Find lawyers specialized in various fields of law</p>
+                <span class="inline-flex items-center gap-2 px-4 py-2 bg-accent-50 text-accent-700 rounded-full text-sm font-semibold mb-6 border border-accent-100 shadow-sm transform hover:scale-105 transition duration-300 tracking-wider">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    </svg>
+                    EXPERTISE
+                </span>
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Practice Areas</h2>
+                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Find specialized lawyers tailored to your specific legal needs</p>
             </div>
             
             @php
@@ -125,263 +215,279 @@
             @endphp
             
             <!-- Mobile View (Accordion Style) - Hidden on Desktop -->
-            <div class="lg:hidden space-y-4">
+            <div class="xl:hidden space-y-4">
                 @foreach($specializations as $spec)
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:border-primary-200 transition-colors duration-300">
                         <!-- Parent Card -->
                         <button 
                             @click="toggleSpec({{ $spec->id }}, 0)"
-                            class="w-full text-left p-6 flex items-center justify-between hover:bg-gray-50 transition"
+                            class="w-full text-left p-5 md:p-6 flex items-center justify-between hover:bg-gray-50/50 transition duration-300"
                         >
                             <div class="flex items-center gap-4 flex-1">
                                 @if($spec->image_url)
-                                    <img src="{{ $spec->image_url }}" alt="{{ $spec->name }}" class="w-16 h-16 object-cover rounded-xl">
+                                    <div class="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
+                                        <img src="{{ $spec->image_url }}" alt="{{ $spec->name }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                                        <div class="absolute inset-0 bg-primary-900/10"></div>
+                                    </div>
                                 @else
-                                    <div class="w-16 h-16 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl flex items-center justify-center">
-                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                                    <div class="w-16 h-16 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl flex items-center justify-center shrink-0 border border-primary-200/50 shadow-sm group-hover:shadow-md transition-shadow group-hover:scale-105 duration-300">
+                                        <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
                                         </svg>
                                     </div>
                                 @endif
                                 <div>
-                                    <h3 class="font-bold text-lg text-gray-900">{{ $spec->name }}</h3>
-                                    <p class="text-sm text-gray-600">{{ $spec->children->count() }} {{ Str::plural('specialization', $spec->children->count()) }}</p>
+                                    <h3 class="font-bold text-lg text-gray-900 group-hover:text-primary-700 transition-colors">{{ $spec->name }}</h3>
+                                    <p class="text-sm font-medium text-gray-500">{{ $spec->children->count() }} {{ Str::plural('Category', $spec->children->count()) }}</p>
                                 </div>
                             </div>
-                            <svg class="w-6 h-6 text-gray-400 transition-transform flex-shrink-0" :class="{ 'rotate-180': expandedSpec === {{ $spec->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </button>
-                        
-                        <!-- Expanded Content -->
-                        <div 
-                            x-show="expandedSpec === {{ $spec->id }}"
-                            x-transition
-                            class="border-t border-gray-200 p-6 bg-gray-50"
-                            style="display: none;"
-                        >
-                            @if($spec->description)
-                                <p class="text-gray-600 mb-4">{{ $spec->description }}</p>
-                            @endif
-                            
-                            <a href="{{ route('lawyers.search', ['specializations' => [$spec->slug]]) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-700 text-white rounded-lg font-semibold hover:bg-primary-800 transition mb-6">
-                                <span>Find {{ $spec->name }} Lawyers</span>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                                </svg>
-                            </a>
-                            
-                            <!-- Sub-specializations -->
-                            @if($spec->children->count() > 0)
-                                <div class="mt-4">
-                                    <h4 class="font-bold text-gray-900 mb-3">Sub-specializations</h4>
-                                    <div class="space-y-2">
-                                        @foreach($spec->children as $child)
-                                            <div>
-                                                <button 
-                                                    @click="selectChild({{ json_encode(['id' => $child->id, 'name' => $child->name, 'description' => $child->description]) }})"
-                                                    class="w-full text-left p-3 rounded-lg border-2 transition-all"
-                                                    :class="{ 
-                                                        'border-primary-500 bg-primary-50': selectedChild && selectedChild.id === {{ $child->id }},
-                                                        'border-gray-200 bg-white hover:border-primary-300': !selectedChild || selectedChild.id !== {{ $child->id }}
-                                                    }"
-                                                >
-                                                    <div class="flex items-center justify-between">
-                                                        <span class="font-medium text-gray-900">{{ $child->name }}</span>
-                                                        <svg class="w-5 h-5 text-primary-600 transition-transform" :class="{ 'rotate-90': selectedChild && selectedChild.id === {{ $child->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                                        </svg>
-                                                    </div>
-                                                </button>
-                                                
-                                                <div 
-                                                    x-show="selectedChild && selectedChild.id === {{ $child->id }}"
-                                                    x-transition
-                                                    class="mt-2 p-3 bg-primary-50 rounded-lg border border-primary-200"
-                                                    style="display: none;"
-                                                >
-                                                    @if($child->description)
-                                                        <p class="text-sm text-gray-700 mb-3">{{ $child->description }}</p>
-                                                    @endif
-                                                    <a href="{{ route('lawyers.search', ['specializations' => [$child->slug]]) }}" class="inline-flex items-center gap-2 px-3 py-2 bg-primary-700 text-white text-sm rounded-lg font-semibold hover:bg-primary-800 transition">
-                                                        <span>Find Lawyers</span>
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                                                        </svg>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-            
-            <!-- Desktop View (Overlay Style) - Hidden on Mobile -->
-            <div class="hidden lg:grid grid-cols-3 gap-6 lg:gap-8 relative">
-                @foreach($specializations as $index => $spec)
-                    @php
-                        $positionInRow = $index % 3;
-                        // Calculate offset including gaps: -0%, -100% - gap, -200% - 2*gap
-                        // gap-8 = 2rem = 32px, so we need to account for it
-                        if ($positionInRow == 0) {
-                            $leftOffset = 0;
-                        } elseif ($positionInRow == 1) {
-                            $leftOffset = 'calc(-100% - 2rem)'; // -100% minus one gap
-                        } else {
-                            $leftOffset = 'calc(-200% - 4rem)'; // -200% minus two gaps
-                        }
-                    @endphp
-                    <div class="relative" :class="{ 'z-50': expandedSpec === {{ $spec->id }}, 'z-10': expandedSpec !== {{ $spec->id }} }">
-                        <!-- Parent Card -->
-                        <button 
-                            @click="toggleSpec({{ $spec->id }}, {{ $index }})"
-                            class="w-full group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 h-80 duration-300"
-                            :class="{ 'ring-4 ring-primary-500': expandedSpec === {{ $spec->id }} }"
-                        >
-                            <!-- Background Image or Default -->
-                            <div class="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-800">
-                                @if($spec->image_url)
-                                    <img src="{{ $spec->image_url }}" alt="{{ $spec->name }}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition duration-500">
-                                @else
-                                    <!-- Default gradient background -->
-                                    <div class="w-full h-full flex items-center justify-center">
-                                        <svg class="w-32 h-32 text-white opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
-                                        </svg>
-                                    </div>
-                                @endif
-                            </div>
-                            
-                            <!-- Overlay -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                            
-                            <!-- Title (Always Visible) -->
-                            <div class="absolute bottom-0 left-0 right-0 p-6">
-                                <h3 class="font-bold text-2xl text-white leading-tight">{{ $spec->name }}</h3>
-                                <p class="text-primary-100 text-sm mt-2">{{ $spec->children->count() }} {{ Str::plural('specialization', $spec->children->count()) }}</p>
-                            </div>
-                            
-                            <!-- Click indicator -->
-                            <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full p-2">
-                                <svg class="w-6 h-6 text-white transition-transform" :class="{ 'rotate-180': expandedSpec === {{ $spec->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300" :class="{ 'bg-primary-50 text-primary-600': expandedSpec === {{ $spec->id }}, 'bg-gray-50 text-gray-400 group-hover:bg-gray-100': expandedSpec !== {{ $spec->id }} }">
+                                <svg class="w-5 h-5 transition-transform duration-300" :class="{ 'rotate-180': expandedSpec === {{ $spec->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                 </svg>
                             </div>
                         </button>
                         
-                        <!-- Expanded Panel (Absolute positioned, aligned to row start) -->
+                        <!-- Expanded Content -->
                         <div 
                             x-show="expandedSpec === {{ $spec->id }}"
-                            x-transition:enter="transition ease-out duration-300"
-                            x-transition:enter-start="opacity-0 transform scale-95"
-                            x-transition:enter-end="opacity-100 transform scale-100"
-                            x-transition:leave="transition ease-in duration-200"
-                            x-transition:leave-start="opacity-100 transform scale-100"
-                            x-transition:leave-end="opacity-0 transform scale-95"
-                            @click.away="expandedSpec = null; selectedChild = null"
-                            class="absolute top-0 bg-white rounded-2xl shadow-2xl overflow-hidden z-40"
-                            style="display: none; left: {{ is_numeric($leftOffset) ? $leftOffset . '%' : $leftOffset }}; width: calc(300% + 4rem); min-height: calc(200% + 1.5rem);"
+                            x-collapse
+                            class="border-t border-gray-100 bg-gradient-to-b from-gray-50/50 to-white"
+                            style="display: none;"
                         >
-                            <!-- Close Button -->
-                            <button 
-                                @click="expandedSpec = null; selectedChild = null"
-                                class="absolute top-4 right-4 z-50 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 shadow-lg transition"
-                            >
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            </button>
-                            
-                            <div class="p-8">
-                                <!-- Parent Info -->
-                                <div class="flex items-start gap-4 mb-8">
-                                    @if($spec->image_url)
-                                        <img src="{{ $spec->image_url }}" alt="{{ $spec->name }}" class="w-24 h-24 object-cover rounded-xl shadow-lg">
-                                    @else
-                                        <div class="w-24 h-24 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl flex items-center justify-center shadow-lg">
-                                            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
-                                            </svg>
-                                        </div>
-                                    @endif
-                                    <div class="flex-1">
-                                        <h3 class="text-3xl font-bold text-gray-900 mb-2">{{ $spec->name }}</h3>
-                                        @if($spec->description)
-                                            <p class="text-gray-600 leading-relaxed mb-4">{{ $spec->description }}</p>
-                                        @endif
-                                        <a href="{{ route('lawyers.search', ['specializations' => [$spec->slug]]) }}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-700 text-white rounded-xl font-semibold hover:bg-primary-800 transition shadow-lg">
-                                            <span>Find {{ $spec->name }} Lawyers</span>
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
+                            <div class="p-5 md:p-6">
+                                @if($spec->description)
+                                    <p class="text-gray-600 mb-6 leading-relaxed">{{ $spec->description }}</p>
+                                @endif
                                 
-                                <!-- Sub-specializations in 3-column grid -->
-                                <div>
-                                    <h4 class="text-xl font-bold text-gray-900 mb-4">Sub-specializations ({{ $spec->children->count() }})</h4>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        @foreach($spec->children as $child)
-                                            <div>
-                                                <button 
-                                                    @click="selectChild({{ json_encode([
-                                                        'id' => $child->id,
-                                                        'name' => $child->name,
-                                                        'description' => $child->description,
-                                                        'image_url' => $child->image_url,
-                                                        'icon' => $child->icon
-                                                    ]) }})"
-                                                    class="w-full text-left p-4 rounded-xl border-2 transition-all hover:border-primary-500 hover:bg-primary-50 hover:shadow-md"
-                                                    :class="{ 
-                                                        'border-primary-500 bg-primary-50 shadow-md': selectedChild && selectedChild.id === {{ $child->id }},
-                                                        'border-gray-200 bg-white': !selectedChild || selectedChild.id !== {{ $child->id }}
-                                                    }"
-                                                >
-                                                    <div class="flex items-center justify-between gap-2">
-                                                        <p class="font-semibold text-gray-900 flex-1">{{ $child->name }}</p>
-                                                        <svg class="w-5 h-5 text-primary-600 flex-shrink-0 transition-transform" :class="{ 'rotate-90': selectedChild && selectedChild.id === {{ $child->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                                        </svg>
-                                                    </div>
-                                                </button>
-                                                
-                                                <!-- Child Detail (Collapsible below card) -->
-                                                <div 
-                                                    x-show="selectedChild && selectedChild.id === {{ $child->id }}"
-                                                    x-transition
-                                                    class="mt-2 p-4 bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl border-2 border-primary-200"
-                                                    style="display: none;"
-                                                >
-                                                    @if($child->image_url)
-                                                        <img src="{{ $child->image_url }}" alt="{{ $child->name }}" class="w-full h-32 object-cover rounded-lg mb-3">
-                                                    @else
-                                                        <div class="w-full h-32 bg-gradient-to-br from-primary-600 to-primary-800 rounded-lg flex items-center justify-center mb-3">
-                                                            <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                                <a href="{{ route('lawyers.search', ['specializations' => [$spec->slug]]) }}" class="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-xl font-semibold hover:bg-primary-700 transition-colors duration-300 mb-8 shadow-md hover:shadow-lg">
+                                    <span>Browse All {{ $spec->name }}</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                    </svg>
+                                </a>
+                                
+                                <!-- Sub-specializations -->
+                                @if($spec->children->count() > 0)
+                                    <div>
+                                        <h4 class="text-xs font-bold tracking-widest text-gray-400 uppercase mb-4">Specific Categories</h4>
+                                        <div class="space-y-3">
+                                            @foreach($spec->children as $child)
+                                                <div class="group/sub">
+                                                    <button 
+                                                        @click="selectChild({{ json_encode(['id' => $child->id]) }})"
+                                                        class="w-full text-left p-4 rounded-xl border border-gray-200 transition-all duration-300"
+                                                        :class="{ 
+                                                            'border-primary-300 bg-primary-50/30 shadow-sm': selectedChild && selectedChild.id === {{ $child->id }},
+                                                            'bg-white hover:border-primary-200 hover:shadow-sm': !selectedChild || selectedChild.id !== {{ $child->id }}
+                                                        }"
+                                                    >
+                                                        <div class="flex items-center justify-between">
+                                                            <span class="font-semibold text-gray-800" :class="{ 'text-primary-700': selectedChild && selectedChild.id === {{ $child->id }} }">{{ $child->name }}</span>
+                                                            <svg class="w-5 h-5 transition-transform duration-300" :class="{ 'text-primary-600 rotate-90': selectedChild && selectedChild.id === {{ $child->id }}, 'text-gray-400 group-hover/sub:text-primary-400': !selectedChild || selectedChild.id !== {{ $child->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                                             </svg>
                                                         </div>
-                                                    @endif
-                                                    <h5 class="font-bold text-gray-900 mb-2">{{ $child->name }}</h5>
-                                                    @if($child->description)
-                                                        <p class="text-sm text-gray-700 leading-relaxed mb-3">{{ $child->description }}</p>
-                                                    @endif
-                                                    <a href="{{ route('lawyers.search', ['specializations' => [$child->slug]]) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-700 text-white text-sm rounded-lg font-semibold hover:bg-primary-800 transition">
-                                                        <span>Find Lawyers</span>
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                                                        </svg>
-                                                    </a>
+                                                    </button>
+                                                    
+                                                    <div 
+                                                        x-show="selectedChild && selectedChild.id === {{ $child->id }}"
+                                                        x-collapse
+                                                        class="px-4 pb-4 pt-2"
+                                                        style="display: none;"
+                                                    >
+                                                        <div class="bg-white rounded-xl p-4 border border-primary-100 shadow-sm relative overflow-hidden">
+                                                            <div class="absolute top-0 left-0 w-1 h-full bg-primary-500"></div>
+                                                            @if($child->description)
+                                                                <p class="text-sm text-gray-600 mb-4">{{ $child->description }}</p>
+                                                            @endif
+                                                            <a href="{{ route('lawyers.search', ['specializations' => [$child->slug]]) }}" class="inline-flex items-center gap-2 text-primary-700 font-semibold text-sm hover:text-primary-800 transition-colors group/link w-fit">
+                                                                Find Specialized Lawyers
+                                                                <svg class="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                                                </svg>
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        @endforeach
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            
+            <!-- Desktop View (Overlay Style, 5 Columns) - Hidden on Mobile/Tablet -->
+            <div class="hidden xl:grid grid-cols-5 gap-6 relative z-50">
+                @foreach($specializations as $index => $spec)
+                    <div class="relative" :class="{ 'z-[100]': expandedSpec === {{ $spec->id }}, 'z-10 hover:z-20': expandedSpec !== {{ $spec->id }} }">
+                        <!-- Parent Card -->
+                        <button 
+                            @click="toggleSpec({{ $spec->id }}, {{ $index }})"
+                            class="w-full group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 h-[22rem] text-left block"
+                            :class="{ 'ring-2 ring-primary-500 ring-offset-4 ring-offset-gray-50 scale-[1.02] shadow-xl': expandedSpec === {{ $spec->id }}, 'transform hover:-translate-y-2': expandedSpec !== {{ $spec->id }} }"
+                        >
+                            <!-- Background Image or Default -->
+                            <div class="absolute inset-0 bg-gray-900 overflow-hidden">
+                                @if($spec->image_url)
+                                    <img src="{{ $spec->image_url }}" alt="{{ $spec->name }}" class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition duration-700 ease-in-out">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent opacity-90 group-hover:opacity-100 transition duration-500"></div>
+                                @else
+                                    <div class="absolute inset-0 bg-gradient-to-br from-primary-800 to-gray-900 opacity-90"></div>
+                                    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] pointer-events-none"></div>
+                                    <div class="w-full h-[60%] flex items-center justify-center transform group-hover:scale-110 group-hover:-translate-y-2 transition duration-500">
+                                        <svg class="w-24 h-24 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                                        </svg>
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <!-- Content -->
+                            <div class="absolute bottom-0 left-0 right-0 p-6 z-10 transform translate-y-2 group-hover:translate-y-0 transition duration-500">
+                                <div class="w-12 h-1 bg-accent-500 rounded-full mb-4 transform scale-x-0 group-hover:scale-x-100 origin-left transition duration-500"></div>
+                                <h3 class="font-bold text-2xl text-white leading-tight mb-2 max-w-xs">{{ $spec->name }}</h3>
+                                <div class="flex items-center justify-between">
+                                    <p class="text-primary-100 font-medium text-sm">{{ $spec->children->count() }} Categories</p>
+                                    <div class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center transform group-hover:bg-accent-500 group-hover:text-white transition-all duration-300">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                                        </svg>
                                     </div>
                                 </div>
                             </div>
+                        </button>
+                        
+                        <div 
+                            x-show="expandedSpec === {{ $spec->id }}"
+                            class="fixed inset-0 z-[110] flex items-center justify-center p-4 xl:p-8"
+                            style="display: none;"
+                        >
+                            <!-- Dark Blur Backdrop -->
+                            <div 
+                                class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
+                                    x-transition:enter="ease-out duration-300"
+                                    x-transition:enter-start="opacity-0"
+                                    x-transition:enter-end="opacity-100"
+                                    x-transition:leave="ease-in duration-200"
+                                    x-transition:leave-start="opacity-100"
+                                    x-transition:leave-end="opacity-0"
+                                    @click.stop="closeModal()"
+                                ></div>
+
+                                <div 
+                                    class="relative z-10 w-full max-w-[60rem] max-h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col transform transition-all"
+                                    x-transition:enter="transition-all ease-out duration-500"
+                                    x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                    x-transition:leave="transition-all ease-in duration-300"
+                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                    x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+                                >
+                                    <!-- Modal Header (Compact matched with AI Chat) -->
+                                    <div class="bg-primary-700 text-white p-4 md:p-6 flex items-center justify-between flex-shrink-0">
+                                        <div class="flex items-center gap-3 md:gap-4">
+                                            <div class="bg-white/20 rounded-full p-2 md:p-3">
+                                                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-lg md:text-xl font-bold">{{ $spec->name }}</h3>
+                                                <p class="text-xs md:text-sm text-primary-100">Browse specialized categories</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-3 items-center">
+                                            <a href="{{ route('lawyers.search', ['specializations' => [$spec->slug]]) }}" class="hidden sm:inline-flex px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-lg transition-colors items-center gap-2 border border-white/20">
+                                                Browse All
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                                </svg>
+                                            </a>
+                                            <!-- Close Button -->
+                                            <button 
+                                                @click.stop="closeModal()"
+                                                class="text-white hover:bg-white/20 rounded-lg p-2 transition"
+                                                title="Close Panel"
+                                            >
+                                                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Sub-specializations Body -->
+                                    <div class="flex-1 p-6 md:p-8 bg-gray-50 overflow-y-auto">
+                                        @if($spec->description)
+                                            <div class="mb-6 bg-white p-4 rounded-2xl border border-primary-100 shadow-sm">
+                                                <p class="text-gray-600 text-sm leading-relaxed">{{ $spec->description }}</p>
+                                            </div>
+                                        @endif
+
+                                        <div class="mb-5 flex items-center justify-between">
+                                            <h4 class="text-md font-bold text-gray-900">
+                                                Specific Categories
+                                                <span class="bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full text-xs ml-2">{{ $spec->children->count() }}</span>
+                                            </h4>
+                                        </div>
+
+                                        @if($spec->children->count() > 0)
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                                                @foreach($spec->children as $child)
+                                                    <div class="group/card relative bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-primary-200 transition-colors shadow-sm" :class="{ 'ring-2 ring-primary-500 border-transparent': selectedChild && selectedChild.id === {{ $child->id }} }">
+                                                        <!-- Main Card Button -->
+                                                        <button 
+                                                            @click="selectChild({{ json_encode(['id' => $child->id]) }})"
+                                                            class="w-full text-left p-4 bg-white transition-all duration-300 relative z-10"
+                                                        >
+                                                            <div class="flex items-start justify-between gap-3">
+                                                                <div class="flex-1">
+                                                                    <h5 class="font-bold text-gray-900 mb-1 group-hover/card:text-primary-700 transition-colors line-clamp-2" :class="{ 'text-primary-700': selectedChild && selectedChild.id === {{ $child->id }} }">{{ $child->name }}</h5>
+                                                                </div>
+                                                                <div class="shrink-0 w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover/card:bg-primary-50 transition-colors" :class="{ 'bg-primary-50 text-primary-600': selectedChild && selectedChild.id === {{ $child->id }} }">
+                                                                     <svg class="w-4 h-4 text-gray-400 group-hover/card:text-primary-600 transition-transform duration-300" :class="{ 'rotate-180': selectedChild && selectedChild.id === {{ $child->id }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                                    </svg>
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                        
+                                                        <!-- Detail Accordion -->
+                                                        <div 
+                                                            x-show="selectedChild && selectedChild.id === {{ $child->id }}"
+                                                            x-collapse
+                                                            class="bg-gray-50 border-t border-gray-100"
+                                                            style="display: none;"
+                                                        >
+                                                            <div class="p-4 md:p-5">
+                                                                @if($child->description)
+                                                                    <p class="text-sm text-gray-600 mb-4 leading-relaxed">{{ $child->description }}</p>
+                                                                @else
+                                                                    <p class="text-sm text-gray-400 mb-4 italic">No additional description provided.</p>
+                                                                @endif
+                                                                
+                                                                <a href="{{ route('lawyers.search', ['specializations' => [$child->slug]]) }}" class="flex items-center justify-center gap-2 px-4 py-2 text-white bg-primary-700 hover:bg-primary-800 text-sm font-semibold rounded-lg transition-colors group/btn">
+                                                                    Find Lawyers
+                                                                    <svg class="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                                                    </svg>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="text-center py-8">
+                                                <p class="text-gray-500">Loading specific categories...</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                         </div>
                     </div>
                 @endforeach
@@ -390,29 +496,88 @@
         </div>
     </section>
 
-    <section class="py-16 md:py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="py-16 md:py-24 bg-gradient-to-br from-primary-900 via-primary-800 to-accent-900 relative overflow-hidden">
+        <!-- Abstract Background Elements -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-primary-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDEzNGg3djFoLTd6bTAtNWg3djFoLTd6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-10"></div>
+            <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-accent-600/20 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16">
-                <span class="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold mb-4">TRUSTED PLATFORM</span>
-                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Trusted by Clients and Lawyers</h2>
-                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Join thousands of satisfied users who trust AbogadoMo App</p>
+                <span class="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm text-primary-100 rounded-full text-sm font-semibold mb-4 border border-white/10 tracking-wider">TRUSTED PLATFORM</span>
+                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">Trusted by Clients and Lawyers</h2>
+                <p class="text-lg md:text-xl text-primary-100 max-w-2xl mx-auto">Join thousands of satisfied users who trust <span class="text-white font-semibold">AbogadoMo App</span></p>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="text-5xl font-bold text-primary-700 mb-2">500+</div>
-                    <div class="text-gray-600 font-medium">Verified Lawyers</div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                <!-- Stat Card 1 -->
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-2xl transform group-hover:scale-105 transition-transform duration-500 ease-out"></div>
+                    <div class="relative bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/10 text-center hover:bg-white/20 transition duration-500 h-full flex flex-col items-center justify-center transform group-hover:-translate-y-2 group-hover:shadow-[0_0_30px_rgba(var(--color-primary-500),0.3)]">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition duration-500">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex items-baseline justify-center gap-1 group-hover:scale-110 transition duration-500">
+                            <div class="text-5xl font-bold text-white tracking-tight">500</div>
+                            <div class="text-4xl font-bold text-accent-400">+</div>
+                        </div>
+                        <div class="text-primary-100 font-medium text-lg mt-2">Verified Lawyers</div>
+                    </div>
                 </div>
-                <div class="text-center">
-                    <div class="text-5xl font-bold text-primary-700 mb-2">10k+</div>
-                    <div class="text-gray-600 font-medium">Consultations</div>
+
+                <!-- Stat Card 2 -->
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-2xl transform group-hover:scale-105 transition-transform duration-500 ease-out"></div>
+                    <div class="relative bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/10 text-center hover:bg-white/20 transition duration-500 h-full flex flex-col items-center justify-center transform group-hover:-translate-y-2 group-hover:shadow-[0_0_30px_rgba(var(--color-primary-500),0.3)]">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-3 transition duration-500">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+                            </svg>
+                        </div>
+                        <div class="flex items-baseline justify-center gap-1 group-hover:scale-110 transition duration-500">
+                            <div class="text-5xl font-bold text-white tracking-tight">10k</div>
+                            <div class="text-4xl font-bold text-accent-400">+</div>
+                        </div>
+                        <div class="text-primary-100 font-medium text-lg mt-2">Consultations</div>
+                    </div>
                 </div>
-                <div class="text-center">
-                    <div class="text-5xl font-bold text-primary-700 mb-2">4.8/5</div>
-                    <div class="text-gray-600 font-medium">Average Rating</div>
+
+                <!-- Stat Card 3 -->
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-2xl transform group-hover:scale-105 transition-transform duration-500 ease-out"></div>
+                    <div class="relative bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/10 text-center hover:bg-white/20 transition duration-500 h-full flex flex-col items-center justify-center transform group-hover:-translate-y-2 group-hover:shadow-[0_0_30px_rgba(var(--color-primary-500),0.3)]">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition duration-500">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                            </svg>
+                        </div>
+                        <div class="flex items-baseline justify-center gap-1 group-hover:scale-110 transition duration-500">
+                            <div class="text-5xl font-bold text-white tracking-tight">4.8</div>
+                            <div class="text-4xl font-bold text-accent-400">/5</div>
+                        </div>
+                        <div class="text-primary-100 font-medium text-lg mt-2">Average Rating</div>
+                    </div>
                 </div>
-                <div class="text-center">
-                    <div class="text-5xl font-bold text-primary-700 mb-2">24/7</div>
-                    <div class="text-gray-600 font-medium">Available</div>
+
+                <!-- Stat Card 4 -->
+                <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-2xl transform group-hover:scale-105 transition-transform duration-500 ease-out"></div>
+                    <div class="relative bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/10 text-center hover:bg-white/20 transition duration-500 h-full flex flex-col items-center justify-center transform group-hover:-translate-y-2 group-hover:shadow-[0_0_30px_rgba(var(--color-primary-500),0.3)]">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-3 transition duration-500">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex items-baseline justify-center gap-1 group-hover:scale-110 transition duration-500">
+                            <div class="text-5xl font-bold text-white tracking-tight">24</div>
+                            <div class="text-4xl font-bold text-accent-400">/7</div>
+                        </div>
+                        <div class="text-primary-100 font-medium text-lg mt-2">Available</div>
+                    </div>
                 </div>
             </div>
         </div>

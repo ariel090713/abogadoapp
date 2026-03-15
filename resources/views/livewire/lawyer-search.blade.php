@@ -62,7 +62,7 @@
                     <!-- AI Chat Interface -->
                     <div class="flex flex-col h-[95vh] sm:h-[80vh]">
                         <!-- Chat Header -->
-                        <div class="bg-gradient-to-br from-primary-700 to-accent-700 text-white p-4 md:p-6 flex items-center justify-between flex-shrink-0">
+                        <div class="bg-primary-700 text-white p-4 md:p-6 flex items-center justify-between flex-shrink-0">
                             <div class="flex items-center gap-3 md:gap-4">
                                 <div class="bg-white/20 rounded-full p-2 md:p-3">
                                     <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
