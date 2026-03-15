@@ -16,11 +16,13 @@
     <x-guest-navbar />
 
     <!-- Hero Section -->
-    <section class="relative bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white py-16 md:py-24 lg:py-32 overflow-hidden">
-        <!-- Background Image -->
+    <section class="relative bg-gradient-to-br from-primary-900 via-primary-800 to-accent-900 text-white py-16 md:py-24 lg:py-32 overflow-hidden">
+        <!-- Abstract Background Elements -->
         <div class="absolute inset-0 z-0">
-            <img src="https://lawyerstorage-public.s3.ap-southeast-2.amazonaws.com/abogadomoattybg.png" alt="Background" class="w-full h-full object-cover scale-110 opacity-[0.15]">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary-700/60 via-primary-800/60 to-accent-700/60"></div>
+            <img src="https://lawyerstorage-public.s3.ap-southeast-2.amazonaws.com/abogadomoattybg.png" alt="Background" class="absolute inset-0 w-full h-full object-cover scale-110 opacity-[0.10] mix-blend-overlay">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
+            <div class="absolute top-0 right-0 w-96 h-96 bg-accent-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-pulse"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-primary-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-pulse" style="animation-delay: 2s;"></div>
         </div>
         
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

@@ -32,8 +32,10 @@ Route::get('/faqs', \App\Livewire\Resources\FaqsIndex::class)->name('resources.f
 Route::get('/about', \App\Livewire\AboutUs::class)->name('about');
 Route::get('/contact', \App\Livewire\ContactUs::class)->name('contact');
 
-// Coming Soon Pages
-Route::get('/webinars', \App\Livewire\ComingSoon::class)->name('webinars');
+// Community & Webinars
+Route::get('/webinars', \App\Livewire\Resources\WebinarsIndex::class)->name('resources.webinars');
+Route::get('/webinars/{slug}', \App\Livewire\Resources\WebinarView::class)->name('resources.webinars.view');
+
 Route::get('/community', \App\Livewire\ComingSoon::class)->name('community');
 
 // Document Routes (Public - Browse without login)

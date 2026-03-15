@@ -1,41 +1,46 @@
 <div>
     <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-primary-700 via-primary-800 to-accent-700 text-white py-16">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="relative bg-gradient-to-br from-primary-900 via-primary-800 to-accent-900 text-white overflow-hidden py-24 lg:py-32">
+        <!-- Abstract Background Elements -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
+            <div class="absolute top-0 right-0 w-96 h-96 bg-accent-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-pulse"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-primary-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-pulse" style="animation-delay: 2s;"></div>
+        </div>
+        <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-6">
                 <a href="{{ route('resources.legal-guides') }}" 
-                    class="inline-flex items-center gap-2 text-primary-100 hover:text-white transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    class="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors font-medium text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
                     Back to Legal Guides
                 </a>
             </div>
 
-            <div class="flex items-center gap-3 mb-4">
-                <span class="px-4 py-2 bg-accent-600 text-white text-sm font-semibold rounded-full">
+            <div class="flex flex-wrap items-center gap-3 mb-6">
+                <span class="px-4 py-2 bg-accent-600/90 backdrop-blur text-white text-xs font-bold rounded-full shadow-sm">
                     {{ ucfirst(str_replace('_', ' ', $guide->category)) }}
                 </span>
-                <span class="text-primary-100">
+                <span class="px-3 py-1 bg-white/10 backdrop-blur-md text-white border border-white/20 text-xs font-bold rounded-full shadow-sm">
                     {{ $guide->created_at->format('F d, Y') }}
                 </span>
-                <span class="text-primary-100">•</span>
-                <span class="text-primary-100">
+                <span class="px-3 py-1 bg-white/10 backdrop-blur-md text-white border border-white/20 text-xs font-bold rounded-full shadow-sm">
                     {{ number_format($guide->views) }} views
                 </span>
             </div>
 
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ $guide->title }}</h1>
-            <p class="text-xl text-primary-100">{{ $guide->excerpt }}</p>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-primary-50 to-accent-100 drop-shadow-sm">{{ $guide->title }}</h1>
+            <p class="text-lg md:text-xl md:leading-relaxed text-primary-100/90 max-w-3xl">{{ $guide->excerpt }}</p>
 
             @if($guide->author)
-                <div class="flex items-center gap-3 mt-6 pt-6 border-t border-primary-600">
-                    <div class="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                <div class="flex items-center gap-3 mt-8 pt-8 border-t border-primary-600/30">
+                    <div class="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md border border-primary-500">
                         {{ substr($guide->author->name, 0, 1) }}
                     </div>
                     <div>
-                        <div class="font-semibold">{{ $guide->author->name }}</div>
-                        <div class="text-sm text-primary-100">Author</div>
+                        <div class="font-semibold text-white">{{ $guide->author->name }}</div>
+                        <div class="text-sm text-primary-200">Author</div>
                     </div>
                 </div>
             @endif
